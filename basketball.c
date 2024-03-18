@@ -2402,46 +2402,30 @@ void eraseAngleBackground(){
 }
 
 void eraseBasketballNet(){
-	
-	
 	for (int x =game.net.x  ; x< game.net.x+80 ;x++){
 		for (int y = game.net.y; y<game.net.y + 47; y++){
-			
-				plot_pixel(x,y,game.background[y][x]);
-							
+				plot_pixel(x,y,game.background[y][x]);			
 		}
 	}	
-	
-	
-	
 }
+
 void drawBasketballNet(){
-	
 	for (int x =game.net.x  ; x< game.net.x+80 ;x++){
 		for (int y = game.net.y; y<game.net.y + 47; y++){
 			if(basketballNetModel[y-game.net.y][x-game.net.x] != 51168){
 				plot_pixel(x,y,basketballNetModel[y-game.net.y][x-game.net.x]);
 			}
-				
 		}
 	}	
-	
-	
 }
 //draws instruction screen and polls for spacebar
 void callBackInstructions(){
-	
 	//changes game background to instruction screen
 	for(int y=0;y<240;y++){
-		
 		for(int x=0;x<320;x++){
-			
 			game.background[y][x] = instructionScreen[y][x];
-			
 		}
-		
 	}
-	
 	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
@@ -2608,8 +2592,6 @@ void callBackCharacter(){
 
 //draws intro screen and polls for spacebar to move onto next gamestate
 void callBackIntro(){
-	
-
 	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
@@ -2623,13 +2605,10 @@ void callBackIntro(){
   	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
   	//clear_screen();
 	drawBackground();
-	
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
 	unsigned char byte3 = 0;
-	
   	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
-
 	int PS2_data, RVALID;
 	
 	//polling loop for spacebar 
@@ -2644,40 +2623,26 @@ void callBackIntro(){
 			byte2 = byte3;
 			byte3 = PS2_data & 0xFF;
 		}
-
 		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
-			
-			if(byte2 == 0xf0){
-				
-				if(byte1==0x29){
-					
+			if(byte2 == 0xf0){	
+				if(byte1==0x29){	
 					game.gameState = GAMESTATE_CHARACTER;
 					break;
 				}	
 			}
-			
 		}
-		
 	}		
-		
-	
 }
 
 void drawBackground(){
-	
 	for(int y=0;y<240;y++){
-		
 		for(int x=0;x<320;x++){
-			
 			plot_pixel(x,y,game.background[y][x]);
-			
 		}
-		
 	}
 }
 
 void drawCharacter(){
-
 	for(int y=PLAYER_START_Y;y<PLAYER_END_Y;y++){
 		for(int x=PLAYER_START_X;x<PLAYER_END_X;x++){
 			if(game.player.playerModel[y-PLAYER_START_Y][x]!=51168){
@@ -2706,23 +2671,10 @@ void callbackScore(){
 						game.basketball.dx =1;
 					}
 					game.net.score =true;
-					//draw_line( game.basketball.prevX+BALL_DIAMETER/2, game.basketball.prevY +BALL_DIAMETER/2,(int)intersectX,game.net.y+NET_OFFSET_Y ,GREEN);
 					game.basketball.x = game.net.x+NET_OFFSET_X - BALL_DIAMETER/2;
 					game.basketball.y = game.net.y+NET_OFFSET_Y - BALL_DIAMETER/2;
-					//printf("score %f %f %d %d %d %d",  intersectX, m ,game.basketball.x+BALL_DIAMETER/2, game.basketball.prevX+BALL_DIAMETER/2,game.basketball.y+BALL_DIAMETER/2, game.basketball.prevY+BALL_DIAMETER/2 );
 				}
 		}
-		// check if midpoint of ball crosses x axis of net
-		//if((game.basketball.x + BALL_DIAMETER/2)>= (game.net.x+NET_DIAMETER/2) && (game.basketball.prevX + BALL_DIAMETER/2)<=(game.net.x+NET_DIAMETER/2)){	
-		//}
-		/*double distance = sqrt(((game.basketball.x + BALL_DIAMETER/2)-(game.net.x+NET_OFFSET_X)) * ((game.basketball.x + BALL_DIAMETER/2)-(game.net.x+NET_OFFSET_X))
-		+ ((game.basketball.y + BALL_DIAMETER/2)-(game.net.y+NET_OFFSET_Y)) * ((game.basketball.y + BALL_DIAMETER/2)-(game.net.y+NET_OFFSET_Y)));
-
-		if (distance<= BALL_DIAMETER*1.5 && (game.basketball.y +BALL_DIAMETER/2) <= game.net.y+NET_OFFSET_Y){
-			game.basketball.dy = 1;
-			game.basketball.dx =0;
-			printf("score");
-		}*/
 	}
 	
 }
@@ -2743,14 +2695,10 @@ void callbackVisual(double velocityInitial, double theta){
 	bool exit_drawvisual=false;
 	while (1)
     {	
-	
 			//erase
 		eraseVisual(count);
-			
 		//update directions
 		updateVisual();
-		
-		
 		int f = DELAY;
 		f=0;
 		while(f !=0){
@@ -2759,12 +2707,10 @@ void callbackVisual(double velocityInitial, double theta){
 		if(!game.net.score){
 			callbackScore();
 		}
-		
 		//update positions
 		if(!drawVisual()){
 			exit_drawvisual=true;
 		}
-		
 		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer	
 		
@@ -2777,9 +2723,6 @@ void callbackVisual(double velocityInitial, double theta){
 }
 
 bool drawVisual(){
-	
-	
-
 	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +BALL_DIAMETER>=RESOLUTION_Y ){
 		game.basketball.y = game.basketball.startY;
 		game.basketball.x = game.basketball.startX;
@@ -2787,11 +2730,9 @@ bool drawVisual(){
 		if(game.net.score){
 			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y,64704);
 		}
-		
 		return FALSE;
 	}
 	// code for drawing the boxes and lines (not shown)
-	
 	for(int y=game.basketball.y;y<game.basketball.y+BALL_DIAMETER;y++){
 
 		for(int x=game.basketball.x;x<game.basketball.x+BALL_DIAMETER;x++){
@@ -2801,7 +2742,6 @@ bool drawVisual(){
 					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
 				}
 			}
-
 		}
 
 	}
@@ -2809,8 +2749,6 @@ bool drawVisual(){
 			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, GREEN);
 		}
 	// code for updating the locations of boxes (not shown)
-	
-	
 	
 	return TRUE;
 }
@@ -2979,9 +2917,6 @@ void init_game(){
 	}
 }
 
-
-
-
 void plot_pixel(int x, int y, short int line_color)
 {
     *(short int *)(pixel_buffer_start + (y << 10) + (x << 1)) = line_color;
@@ -3046,8 +2981,6 @@ void wait_for_vsync(){
 		status = *(pixel_ctrl_ptr+3);
 	}
 }
-
-
 
 //enabling interrupts
 void enable_A9_interrupts(void)
@@ -3154,7 +3087,6 @@ void config_interrupt(int N, int CPU_target) {
 }
 
 void config_PS2(){
-	
 	printf("config_psr");
 	volatile int* PS2_Data = (int*)0xFF200100; //PS2 DATA register
 	*(PS2_Data +1) = 0x00000001; //writes 1 into PS2_Control register to enable interrupts;	
@@ -3162,41 +3094,21 @@ void config_PS2(){
 }
 
 void keyboard_ISR(){
-	
-	
 	volatile int* LED = (int*)0xff200000;
-	
 	volatile int* PS2_data_reg = (int*)0xff200100; //PS/2 Data register
-	
 	int PS2_data = *(PS2_data_reg); //gets data from register
-	
 	int RVALID; 
-	
 	RVALID = (PS2_data & 0x8000); //getting RVALID field
-	
 	unsigned char keyPressed = (PS2_data & 0xff); //gets last byte, holds the key that was pressed
-	
 	int interruptCode = *(PS2_data_reg+1); //gets interrupt code
-	
 	*(PS2_data_reg + 1) = interruptCode;	//clears the interrupt
-	
-	
 	if(RVALID!=0){
-		
 		if(keyPressed == 0x1c){ //pressed A
-			
 			*LED = 1;
-			
 		}
 		else{
-		
 			*LED = 0x0;
 		}		
 	}
-
-	
 	return;
 }	
-	
-	
-	
