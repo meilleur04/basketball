@@ -1671,112 +1671,72 @@ volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 int main(void)
 {	
 	init_game();
-	//set_A9_IRQ_stack();
 	
-	//config_GIC();
-	
-	//config_PS2();
-	
-	//enable_A9_interrupts();
-	
-    
-    // declare other variables(not shown)
-    // initialize location and direction of rectangles(not shown)
-	
-   	
-	/* set front pixel buffer to start of FPGA On-chip memory */
-	
-  *(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
+	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
 
-  wait_for_vsync();
+	wait_for_vsync();
    
-  pixel_buffer_start = *pixel_ctrl_ptr;
+	pixel_buffer_start = *pixel_ctrl_ptr;
 
-  *(pixel_ctrl_ptr + 1) = 0xC0000000;
-  pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
+	*(pixel_ctrl_ptr + 1) = 0xC0000000;
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
 
 	displayLives();
 	displayScore();
 	displayHighScore();
 	while(1){
-		
 		int x = game.gameState;
-		
-		
 		switch(x){
 			//inital screen of game
 			case GAMESTATE_INTRO:
 				//draws intro screen
 				callBackIntro();
-				
 				break;
 			
 			case GAMESTATE_CHARACTER:
-				
 				callBackCharacter();
-				
 				break;
 			
 			case GAMESTATE_INSTRUCTION:
 				callBackInstructions();
-				
 				break;
 			
 			case GAMESTATE_ANGLE:
-			
 				callBackAngle();
-		
 				break;
 			
 			case GAMESTATE_POWER:
-			
 				callBackPower();
 				break;
 			
 			case GAMESTATE_TIMING:
-			
 				callBackTiming();
 				break;
 			
 			case GAMESTATE_VISUAL:
-			
-				
-				
 				callbackVisual(game.powerBar.velocity,game.aimBar.angle);
 				eraseVisual(1);
 				// redraw rim original color in case its green
 				if(game.net.score){
 					draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, 64704);
 				}
-				
-				
 				break;
 
 			case GAMESTATE_DIFFICULTY:
-			
 				callBackDifficulty();
-				displayScore();
-				
+				displayScore();		
 				displayLives();
 				break;
-			
-			case GAMESTATE_END:
-			
-				break;
-				
-		}
 		
-
+			case GAMESTATE_END:
+				break;		
+		}
 	}
-	
 }
 
 void displayHighScore(){
-	
 	if(game.currentScore> game.highScore){
-		
 		game.highScore = game.currentScore;
-		
 	}
 	int tens = game.highScore/10;
 	int ones = game.highScore%10;
@@ -1784,46 +1744,33 @@ void displayHighScore(){
 	int displayHighScore = (hexdisplay[tens] << 8) | hexdisplay[ones];
 	
 	*(HEX4_5) = displayHighScore;
-	
-	
 }
 
 void displayScore(){
-	
 	int tens = game.currentScore/10;
 	int ones = game.currentScore%10;
 	
 	int displayNum = (hexdisplay[tens] << 8 ) | hexdisplay[ones];
 	*(HEX3_0) = displayNum;
-	
-	
-	
 }
 
 void displayLives(){
-	
 	if(game.lives == 3){
-		
 		*RLEDs = 7;
-		
 	}
 	if(game.lives == 2){
-		
 		*RLEDs = 3;
 	}
 	if(game.lives == 1){
-		
 		*RLEDs = 1;
 	}
 	if(game.lives<=0){
-		
 		*RLEDs = 0;
-	}
-	
+	}	
 }
+
 //need to change net coordinates 
 void callBackDifficulty(){
-	
 	//if scored
 	if(game.net.score){
 		 
@@ -1906,7 +1853,6 @@ void callBackDifficulty(){
 			
 			eraseBasketballNet();
 		
-		
 			newX = 275-NET_OFFSET_X;
 			newY = 70 - NET_OFFSET_Y;
 			
@@ -1936,17 +1882,12 @@ void callBackDifficulty(){
 	
 			game.net.rightRimX = game.net.x +NET_OFFSET_X + NET_DIAMETER/2 +1; 
 			game.net.leftRimX = game.net.x +NET_OFFSET_X - NET_DIAMETER/2;	
-			game.lives = 3;
-			
-		}
-		
+			game.lives = 3;	
+		}	
 	}
-	
 }
 
 void callBackTiming(){
-	
-	
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
 	unsigned char byte3 = 0;
@@ -1957,7 +1898,6 @@ void callBackTiming(){
 	
 	//polling loop for spacebar 
 	while (1) {
-		
 		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
 		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
 		if (RVALID != 0)
@@ -1969,18 +1909,13 @@ void callBackTiming(){
 		}
 
 		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
-			
 			if(byte2 == 0xf0){
-				
-				if(byte1==0x29){
-					
+				if(byte1==0x29){		
 					game.gameState = GAMESTATE_VISUAL;
 					break;
 				}	
-			}
-			
+			}	
 		}
-		
 	}
 	
 	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
@@ -2004,9 +1939,9 @@ void callBackTiming(){
 	game.basketball.prevX = BALL_SPAWN_X;
 	game.basketball.prevY = BALL_SPAWN_Y;	
 	erasePowerBar();
-	eraseVisual(1);
-	
+	eraseVisual(1);	
 }
+
 void callBackPower(){
 	
 	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
@@ -2047,14 +1982,11 @@ void callBackPower(){
 		game.powerBar.ySlider += sliderDirection;
 		
 		if(game.powerBar.ySlider <= POWERBAR_START_y){
-			
 			game.powerBar.ySlider = POWERBAR_START_y + 1;
 			sliderDirection= 1;
-			
 		}
 		
 		if(game.powerBar.ySlider >= POWERBAR_END_y){
-			
 			game.powerBar.ySlider = POWERBAR_END_y - 1; 
 			sliderDirection = -1;
 		}
@@ -2073,9 +2005,6 @@ void callBackPower(){
 			byte3 = PS2_data & 0xFF;
 		}			
 			if(byte3 == 0x1B){ //if pressed and released spacebar, switch game states
-				
-				
-					
 					//eraseSlider();
 					//drawSlider();						
 					game.gameState = GAMESTATE_TIMING;
@@ -2085,9 +2014,6 @@ void callBackPower(){
 					double adjustment = 8 * heightRatio;
 						
 					game.powerBar.velocity = 14 + (int) adjustment;
-						
-						
-					
 					*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
 															// back buffer
 					/* now, swap the front/back buffers, to set the front buffer location */
@@ -2099,7 +2025,7 @@ void callBackPower(){
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
 					//eraseSlider();
 					//drawSlider();
-						/* set back pixel buffer to start of SDRAM memory */
+					/* set back pixel buffer to start of SDRAM memory */
 					*(pixel_ctrl_ptr + 1) = 0xC0000000;
 					pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
 					
@@ -2107,97 +2033,57 @@ void callBackPower(){
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );					
 					//eraseSlider();
 					//drawSlider();
-					
 					game.powerBar.ySlider = POWERBAR_END_y -1;	
-						
 					while(1){
-						
 						PS2_data = *(PS2_ptr);
 						RAVAIL = PS2_data & 0xFFFF0000;
 						
 						if(RAVAIL == 0){
 							PS2_data = *(PS2_ptr);
-							return;
-							
+							return;	
 						}
-						
-						
 					}	
-					
 					return;						
-						
-				
-				
 			}			
-			f--;
-			
+			f--;	
 		}
-
 		count = 1;
 		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer			
-		
+		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer				
 	}
-	
-	
-	
 }
 
 void drawSlider(){
-	
-	
 	draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, 0 );
-	
 }
 
 void eraseSlider(){
-	
-	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-POWERBAR_START_y)][(game.powerBar.prevXSlider+7) - (POWERBAR_START_X) -1]  );
-	
-	
+	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-POWERBAR_START_y)][(game.powerBar.prevXSlider+7) - (POWERBAR_START_X) -1]  );	
 }
+
 void drawPowerBar(){
-	
 	for(int y = POWERBAR_START_y;y<POWERBAR_END_y;y++){
-		
 		for(int x= POWERBAR_START_X; x< POWERBAR_END_X; x++){
-			
-				
-				plot_pixel(x,y,game.powerBar.powerBarArray[y-POWERBAR_START_y][x-POWERBAR_START_X]);
-			
+				plot_pixel(x,y,game.powerBar.powerBarArray[y-POWERBAR_START_y][x-POWERBAR_START_X]);	
 		}
-		
 	}
 }
 
 void erasePowerBar(){
-	
 	for(int y = POWERBAR_START_y;y<POWERBAR_END_y;y++){
-		
 		for(int x= POWERBAR_START_X; x< POWERBAR_END_X; x++){
-			
-				
-				plot_pixel(x,y,game.background[y][x]);
-			
+				plot_pixel(x,y,game.background[y][x]);	
 		}
-		
 	}
 }
 
 void callBackAngle(){
-	
 	//sets main background
 	for(int y=0;y<240;y++){
-		
-		for(int x=0;x<320;x++){
-			
+		for(int x=0;x<320;x++){	
 			game.background[y][x] = mainBackground[y][x];	
-		}
-				
+		}			
 	}
-	
-	
-	
 	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
@@ -2235,30 +2121,24 @@ void callBackAngle(){
 	game.aimBar.xEnd = BALL_SPAWN_X +15  + game.aimBar.pointX[angleCounter];
 	game.aimBar.yEnd = BALL_SPAWN_Y - 30 + game.aimBar.pointY[angleCounter];	
 
-	while (1) {
-		
-		
-		
-			
+	while (1) {	
 		if(count!=0){
-			
 			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 0xffff);
-			
 		}
+
 		prevAngle = angleCounter;
 		angleCounter+=angleDirection;
 		
 		game.aimBar.prevXEnd = game.aimBar.xEnd;
-		game.aimBar.prevYEnd = game.aimBar.yEnd;		
+		game.aimBar.prevYEnd = game.aimBar.yEnd;
+
 		if(angleCounter==10){
-			
 			angleDirection= -1;
 			angleCounter = 9;
 		}
 		if(angleCounter == -1){
 			angleDirection = 1;
-			angleCounter = 0;
-			
+			angleCounter = 0;	
 		}
 		game.aimBar.xEnd = game.aimBar.pointX[angleCounter] + BALL_SPAWN_X +15 ;
 		game.aimBar.yEnd = game.aimBar.pointY[angleCounter] + BALL_SPAWN_Y - 30;
@@ -2268,9 +2148,6 @@ void callBackAngle(){
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 6447);
 		
-
-		
-
 		int f= 50000;
 		while(f!=0){
 			
@@ -2282,12 +2159,7 @@ void callBackAngle(){
 				byte3 = PS2_data & 0xFF;
 			}
 			
-			if(byte3 == 0x1C){ //if pressed and released spacebar, switch game states
-				
-				
-					
-					
-											
+			if(byte3 == 0x1C){ //if pressed and released spacebar, switch game states					
 				game.gameState = GAMESTATE_POWER;
 				//sets angle
 				//going up
@@ -2299,83 +2171,50 @@ void callBackAngle(){
 					
 					prevAngle = 0;
 				}
-				
 				if(angleDirection == 1){
 					game.aimBar.angle = game.aimBar.angleArray[prevAngle];
 				}
 				else{
 					game.aimBar.angle = game.aimBar.angleArray[prevAngle];					
 				}
-				
-				*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-															// back buffer
+				*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the back buffer
 				/* now, swap the front/back buffers, to set the front buffer location */
 				wait_for_vsync();
-						/* initialize a pointer to the pixel buffer, used by drawing functions */
+				/* initialize a pointer to the pixel buffer, used by drawing functions */
 				pixel_buffer_start = *pixel_ctrl_ptr;
 				//clear_screen(); // pixel_buffer_start points to the pixel buffer
-				
 				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
 				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
-				
 				/* set back pixel buffer to start of SDRAM memory */
 				*(pixel_ctrl_ptr + 1) = 0xC0000000;
 				pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
 				//clear_screen();
 				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
 				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
-				
-				
-				while(1){
-						
+				while(1){	
 					PS2_data = *(PS2_ptr);
-					RAVAIL = PS2_data & 0xFFFF0000;
-						
+					RAVAIL = PS2_data & 0xFFFF0000;	
 					if(RAVAIL == 0){
-						return; 
-							
-					}
-						
-						
-				}				
-					
+						return; 		
+					}		
+				}					
 				return;						
-					
-				
-				
 			}			
 			f--;
-			
 		}
-		
 		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer	
-		
 	}	
-	
-	
 }
 
-
-
 void drawAngleBackground(){
-	
 	for(int y=BALL_SPAWN_Y - 30; y<BALL_SPAWN_Y; y++ ){
-		
 		for(int x=BALL_SPAWN_X +15; x<BALL_SPAWN_X +45; x++){
-			
 			if(angle[y - (BALL_SPAWN_Y - 30)][x - (BALL_SPAWN_X +15)] != NOTDRAW){
-				
 				plot_pixel(x,y,angle[y - (BALL_SPAWN_Y - 30) ][x - (BALL_SPAWN_X +15)]);
-				
 			}
-			
-			
 		}
-		
-		
 	}
-		
 }
 
 void eraseAngleBackground(){
@@ -2489,37 +2328,21 @@ void callBackCharacter(){
 	int PS2_data, RVALID;
 	
 	while (1) {
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
-		{
-			/* always save the last three bytes received */
-			byte1 = byte2;
-			byte2 = byte3;
-			byte3 = PS2_data & 0xFF;
-		}
-		if(byte3 == 0x16){ //if pressed and released 1, change model to steph curry
-			if(byte2 == 0xf0){
-				if(byte1==0x16){
-					for(int y=0; y<81; y++){
-						for(int x=0; x<69; x++){
-							game.player.playerModel[y][x] = stephShootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
-							game.player.playerID = 1;	
-						}	
-					}		
-					game.gameState = GAMESTATE_INSTRUCTION;
-					return;
-					
+		if(callBackCharacter() == 1){ //if pressed and released 1, change model to steph curry
+			for(int y=0; y<81; y++){
+				for(int x=0; x<69; x++){
+					game.player.playerModel[y][x] = stephShootingModel[y][x];
+					game.player.x = PLAYER_START_X;
+					game.player.prevX = PLAYER_END_X;
+					game.player.y = PLAYER_START_Y;
+					game.player.y = PLAYER_END_Y;
+					game.player.playerID = 1;	
 				}	
-			}	
+			}		
+			game.gameState = GAMESTATE_INSTRUCTION;
+			return;
 		}
-		if(byte3 == 0x1e){ //if pressed and released 2, change model to FVV
-			if(byte2 == 0xf0){
-				if(byte1==0x1e){
+		if(callBackCharacter() == 2){ //if pressed and released 2, change model to FVV
 					for(int y=0; y<81; y++){
 						for(int x=0; x<69; x++){
 							game.player.playerModel[y][x] = FFVshootingModel[y][x];
@@ -2532,8 +2355,6 @@ void callBackCharacter(){
 					}
 					game.gameState = GAMESTATE_INSTRUCTION;
 					return;		
-				}	
-			}	
 		}
 		if(byte3 == 0x26){ //if pressed and released 3, change model to kawhi leonard
 			if(byte2 == 0xf0){
@@ -2579,8 +2400,7 @@ void callBackCharacter(){
 
 //draws intro screen and polls for spacebar to move onto next gamestate
 void callBackIntro(){
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
+	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
   	wait_for_vsync();
     /* initialize a pointer to the pixel buffer, used by drawing functions */
@@ -2598,25 +2418,12 @@ void callBackIntro(){
   	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
 	int PS2_data, RVALID;
 	
-	//polling loop for spacebar 
+	//polling loop for spacebar
 	while (1) {
-		
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
+		if (key_push() != 0)
 		{
-			/* always save the last three bytes received */
-			byte1 = byte2;
-			byte2 = byte3;
-			byte3 = PS2_data & 0xFF;
-		}
-		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
-			if(byte2 == 0xf0){	
-				if(byte1==0x29){	
-					game.gameState = GAMESTATE_CHARACTER;
-					break;
-				}	
-			}
+			game.gameState = GAMESTATE_CHARACTER;
+			break;
 		}
 	}		
 }
@@ -2941,9 +2748,7 @@ void draw_line(int x0, int y0,int x1, int y1, short int line_color){
 	int y = y0;
 	int y_step;
 	y_step =(y0<y1)?1:-1;
-	
 	for(int x = x0; x<=x1 ;x++){
-		
 		if(is_steep){
 			plot_pixel(y,x,line_color);
 		}
@@ -2954,8 +2759,7 @@ void draw_line(int x0, int y0,int x1, int y1, short int line_color){
 		if(error >=0){ 
 			y = y+y_step;
 			error = error-deltax;
-		}
-		
+		}		
 	}
 }
 
@@ -2969,133 +2773,32 @@ void wait_for_vsync(){
 	}
 }
 
-//enabling interrupts
-void enable_A9_interrupts(void)
-{
-	int status = 0b01010011;
-	asm("msr cpsr, %[ps]" : : [ps]"r"(status));
-	
-}
+int key_push() {
+	volatile int *LEDR_ptr = 0xFF200000;
+	volatile int *KEYs = 0xff200050;
+	int value;
+	int edge_cap;
 
-void disable_A9_interrupts(void) {
-    int status = 0b11010011;
-    asm("msr cpsr_c, %[ps]" : : [ps] "r"(status));
-}
-
-// Define the remaining exception handlers
-void __attribute__ ((interrupt)) __cs3_isr_undef (void) {
-    while (1);
-}
-
-void __attribute__ ((interrupt)) __cs3_isr_swi (void) {
-    while (1);
-}
-
-void __attribute__ ((interrupt)) __cs3_isr_pabort (void) {
-    while (1);
-}
-
-void __attribute__ ((interrupt)) __cs3_isr_dabort (void) {
-    while (1);
-}
-
-void __attribute__ ((interrupt)) __cs3_isr_fiq (void) {
-    while (1);
-}
-
-
-
-/* Define the IRQ exception handler */
-void __attribute__ ((interrupt)) __cs3_isr_irq (void)
-{
-	// Read the ICCIAR from the processor interface
-	int int_ID = *((int *) 0xFFFEC10C);
-
-	if (int_ID == 79){
-		
-		keyboard_ISR();
+	edge_cap = *(KEYs + 3);
+    if (edge_cap == 1) {
+    	*LEDR_ptr = 0x3FF;
+    	*(KEYs + 3) = 0x1;
+		return 1;
+    }
+    if (edge_cap == 2) {
+    	*LEDR_ptr = 0x0;
+    	*(KEYs + 3) = 0x2;
+	  	return 2;
+    }
+	if (edge_cap == 4) {
+		*LEDR_ptr = 0x0;
+		*(KEYs + 3) = 0x4;
+		return 3;
 	}
-	else{
-		while (1){} // if unexpected, then stay here
+	if (edge_cap == 8) {
+		*LEDR_ptr = 0x0;
+		*(KEYs + 3) = 0x8;
+		return 4;
 	}
-	// Write to the End of Interrupt Register (ICCEOIR)
-	*((int *) 0xFFFEC110) = int_ID;
-	return;
+	return 0;
 }
-
-void config_GIC()
-{
-	config_interrupt(79,1);
-
-	// Set Interrupt Priority Mask Register (ICCPMR). Enable interrupts of all priorities
-	*((int *) 0xFFFEC104) = 0xFFFF;
-	// Set CPU Interface Control Register (ICCICR). Enable signaling of interrupts
-	*((int *) 0xFFFEC100) = 1; // enable = 1
-	// Configure the Distributor Control Register (ICDDCR) to send pending interrupts to CPUs
-	*((int *) 0xFFFED000) = 1; // enable = 1
-	
-	return;
-}
-
-void set_A9_IRQ_stack()
-{
-	int stack, mode;
-	stack = 0xFFFFFFFF - 7; // top of A9 on-chip memory, aligned to 8 bytes
-	/* change processor to IRQ mode with interrupts disabled */
-	mode = 0b11010010;
-	asm("msr cpsr, %[ps]" : : [ps] "r" (mode));
-	/* set banked stack pointer */
-	asm("mov sp, %[ps]" : : [ps] "r" (stack));
-	/* go back to SVC mode before executing subroutine return! */
-	mode = 0b11010011;
-	asm("msr cpsr, %[ps]" : : [ps] "r" (mode));
-}
-
-void config_interrupt(int N, int CPU_target) {
-	int reg_offset, index, value, address;
-	/* Configure the Interrupt Set-Enable Registers (ICDISERn).
-	* reg_offset = (integer_div(N / 32) * 4
-	* value = 1 << (N mod 32) */
-	reg_offset = (N >> 3) & 0xFFFFFFFC;
-	index = N & 0x1F;
-	value = 0x1 << index;
-	address = 0xFFFED100 + reg_offset;
-	/* Now that we know the register address and value, set the appropriate bit */
-	*(int *)address |= value;
-	/* Configure the Interrupt Processor Targets Register (ICDIPTRn)
-	* reg_offset = integer_div(N / 4) * 4
-	* index = N mod 4 */
-	reg_offset = (N & 0xFFFFFFFC);
-	index = N & 0x3;
-	address = 0xFFFED800 + reg_offset + index;
-	/* Now that we know the register address and value, write to (only) the
-	* appropriate byte */
-	*(char *)address = (char)CPU_target;
-}
-
-void config_PS2(){
-	printf("config_psr");
-	volatile int* PS2_Data = (int*)0xFF200100; //PS2 DATA register
-	*(PS2_Data +1) = 0x00000001; //writes 1 into PS2_Control register to enable interrupts;	
-	
-}
-
-void keyboard_ISR(){
-	volatile int* LED = (int*)0xff200000;
-	volatile int* PS2_data_reg = (int*)0xff200100; //PS/2 Data register
-	int PS2_data = *(PS2_data_reg); //gets data from register
-	int RVALID; 
-	RVALID = (PS2_data & 0x8000); //getting RVALID field
-	unsigned char keyPressed = (PS2_data & 0xff); //gets last byte, holds the key that was pressed
-	int interruptCode = *(PS2_data_reg+1); //gets interrupt code
-	*(PS2_data_reg + 1) = interruptCode;	//clears the interrupt
-	if(RVALID!=0){
-		if(keyPressed == 0x1c){ //pressed A
-			*LED = 1;
-		}
-		else{
-			*LED = 0x0;
-		}		
-	}
-	return;
-}	
