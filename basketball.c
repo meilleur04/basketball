@@ -1888,33 +1888,16 @@ void callBackDifficulty(){
 }
 
 void callBackTiming(){
-	unsigned char byte1 = 0;
-	unsigned char byte2 = 0;
-	unsigned char byte3 = 0;
-	
   	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
 
 	int PS2_data, RVALID;
 	
 	//polling loop for spacebar 
 	while (1) {
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
-		{
-			/* always save the last three bytes received */
-			byte1 = byte2;
-			byte2 = byte3;
-			byte3 = PS2_data & 0xFF;
-		}
 
-		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
-			if(byte2 == 0xf0){
-				if(byte1==0x29){		
+		if(key_push() == 1){ //if pressed and released spacebar, switch game states	
 					game.gameState = GAMESTATE_VISUAL;
 					break;
-				}	
-			}	
 		}
 	}
 	
@@ -1963,10 +1946,6 @@ void callBackPower(){
 	int sliderDirection = -1;
 	int heightRatio; 
 	
-	unsigned char byte1 = 0;
-	unsigned char byte2 = 0;
-	unsigned char byte3 = 0;
-	
   	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
 
 	int PS2_data, RVALID,RAVAIL;
@@ -1996,17 +1975,7 @@ void callBackPower(){
 		//delay loop
 		int f = 8000;
 		while(f!=0){
-			
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
-		{
-				/* always save the last three bytes received */
-			byte3 = PS2_data & 0xFF;
-		}			
-			if(byte3 == 0x1B){ //if pressed and released spacebar, switch game states
-					//eraseSlider();
-					//drawSlider();						
+		if (key_push() == 1){				
 					game.gameState = GAMESTATE_TIMING;
 						//sets angle
 						
@@ -2035,11 +2004,7 @@ void callBackPower(){
 					//drawSlider();
 					game.powerBar.ySlider = POWERBAR_END_y -1;	
 					while(1){
-						PS2_data = *(PS2_ptr);
-						RAVAIL = PS2_data & 0xFFFF0000;
-						
-						if(RAVAIL == 0){
-							PS2_data = *(PS2_ptr);
+						if(key_push() == 0){
 							return;	
 						}
 					}	
@@ -2106,10 +2071,6 @@ void callBackAngle(){
 	drawVisual();
 	drawAngleBackground();
 	
-	unsigned char byte1 = 0;
-	unsigned char byte2 = 0;
-	unsigned char byte3 = 0;
-	
   	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
 
 	int PS2_data, RVALID,RAVAIL;
@@ -2142,33 +2103,17 @@ void callBackAngle(){
 		}
 		game.aimBar.xEnd = game.aimBar.pointX[angleCounter] + BALL_SPAWN_X +15 ;
 		game.aimBar.yEnd = game.aimBar.pointY[angleCounter] + BALL_SPAWN_Y - 30;
-		
 		count = 1;
-		
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 6447);
-		
 		int f= 50000;
 		while(f!=0){
-			
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-			if (RVALID != 0)
-			{
-				/* always save the last three bytes received */
-				byte3 = PS2_data & 0xFF;
-			}
-			
-			if(byte3 == 0x1C){ //if pressed and released spacebar, switch game states					
+			if(key_push() == 1){ //if pressed and released spacebar, switch game states					
 				game.gameState = GAMESTATE_POWER;
-				//sets angle
-				//going up
 				if(prevAngle == 10){
-					prevAngle = 9;
-					
+					prevAngle = 9;	
 				}
 				else if(prevAngle == -1){
-					
 					prevAngle = 0;
 				}
 				if(angleDirection == 1){
@@ -2192,11 +2137,9 @@ void callBackAngle(){
 				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
 				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
 				while(1){	
-					PS2_data = *(PS2_ptr);
-					RAVAIL = PS2_data & 0xFFFF0000;	
-					if(RAVAIL == 0){
+					if(key_push() == 0){
 						return; 		
-					}		
+					}
 				}					
 				return;						
 			}			
@@ -2265,34 +2208,10 @@ void callBackInstructions(){
   	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
   	//clear_screen();
 	drawBackground();
-	
-	unsigned char byte1 = 0;
-	unsigned char byte2 = 0;
-	unsigned char byte3 = 0;
-	
-  	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
-
-	int PS2_data, RVALID;	
-	//polling loop for spacebar, if pressed go to angle state 
 	while (1) {
-		
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
-		{
-			/* always save the last three bytes received */
-			byte1 = byte2;
-			byte2 = byte3;
-			byte3 = PS2_data & 0xFF;
-		}
-		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
-			if(byte2 == 0xf0){	
-				if(byte1==0x29){
-					
-					game.gameState = GAMESTATE_ANGLE;
-					break;
-				}	
-			}	
+		if(key_push() == 1){ //if pressed and released spacebar, switch game states
+			game.gameState = GAMESTATE_ANGLE;
+			break;
 		}	
 	}
 }
@@ -2328,7 +2247,7 @@ void callBackCharacter(){
 	int PS2_data, RVALID;
 	
 	while (1) {
-		if(callBackCharacter() == 1){ //if pressed and released 1, change model to steph curry
+		if(key_push() == 1){ //if pressed and released 1, change model to steph curry
 			for(int y=0; y<81; y++){
 				for(int x=0; x<69; x++){
 					game.player.playerModel[y][x] = stephShootingModel[y][x];
@@ -2342,57 +2261,47 @@ void callBackCharacter(){
 			game.gameState = GAMESTATE_INSTRUCTION;
 			return;
 		}
-		if(callBackCharacter() == 2){ //if pressed and released 2, change model to FVV
-					for(int y=0; y<81; y++){
-						for(int x=0; x<69; x++){
-							game.player.playerModel[y][x] = FFVshootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
-							game.player.playerID = 2;								
-						}	
-					}
-					game.gameState = GAMESTATE_INSTRUCTION;
-					return;		
-		}
-		if(byte3 == 0x26){ //if pressed and released 3, change model to kawhi leonard
-			if(byte2 == 0xf0){
-				if(byte1==0x26){
-					for(int y=0; y<81; y++){
-						for(int x=0; x<69; x++){
-							game.player.playerModel[y][x] = kawhiLeonardShootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
-							game.player.playerID = 3;									
-						}	
-					}		
-					game.gameState = GAMESTATE_INSTRUCTION;
-					return;
-					
-				}	
-			}	
-		}
-		if(byte3 == 0x25){ //if pressed and released 4, change model to kobe
-			if(byte2 == 0xf0){
-				if(byte1==0x25){
-					for(int y=0; y<81; y++){
-						for(int x=0; x<69; x++){			
-							game.player.playerModel[y][x] = kobeShootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
-							game.player.playerID = 4;				
-						}	
-					}		
-					game.gameState = GAMESTATE_INSTRUCTION;
-					return;
-					
+		if(key_push() == 2){ //if pressed and released 2, change model to FVV
+			for(int y=0; y<81; y++){
+				for(int x=0; x<69; x++){
+					game.player.playerModel[y][x] = FFVshootingModel[y][x];
+					game.player.x = PLAYER_START_X;
+					game.player.prevX = PLAYER_END_X;
+					game.player.y = PLAYER_START_Y;
+					game.player.y = PLAYER_END_Y;
+					game.player.playerID = 2;								
 				}	
 			}
+			game.gameState = GAMESTATE_INSTRUCTION;
+			return;		
+		}
+		if(key_push() == 3){ //if pressed and released 3, change model to kawhi leonard
+			for(int y=0; y<81; y++){
+				for(int x=0; x<69; x++){
+					game.player.playerModel[y][x] = kawhiLeonardShootingModel[y][x];
+					game.player.x = PLAYER_START_X;
+					game.player.prevX = PLAYER_END_X;
+					game.player.y = PLAYER_START_Y;
+					game.player.y = PLAYER_END_Y;
+					game.player.playerID = 3;									
+				}	
+			}		
+			game.gameState = GAMESTATE_INSTRUCTION;
+			return;
+		}
+		if(key_push() == 4){ //if pressed and released 4, change model to kobe
+			for(int y=0; y<81; y++){
+				for(int x=0; x<69; x++){			
+					game.player.playerModel[y][x] = kobeShootingModel[y][x];
+					game.player.x = PLAYER_START_X;
+					game.player.prevX = PLAYER_END_X;
+					game.player.y = PLAYER_START_Y;
+					game.player.y = PLAYER_END_Y;
+					game.player.playerID = 4;				
+				}	
+			}		
+			game.gameState = GAMESTATE_INSTRUCTION;
+			return;
 		}		
 	}		
 }
