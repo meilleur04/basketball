@@ -2379,26 +2379,13 @@ void drawAngleBackground(){
 }
 
 void eraseAngleBackground(){
-	
 	for(int y=BALL_SPAWN_Y - 30; y<BALL_SPAWN_Y; y++ ){
-		
 		for(int x=BALL_SPAWN_X +15; x<BALL_SPAWN_X +45; x++){
-			
 			if(angle[y - (BALL_SPAWN_Y - 30)][x - (BALL_SPAWN_X +15)] != NOTDRAW){
-				
-				plot_pixel(x,y,game.background[y][x]);
-				
-			}
-			
-			
+				plot_pixel(x,y,game.background[y][x]);	
+			}	
 		}
-		
-		
 	}	
-	
-	
-	
-	
 }
 
 void eraseBasketballNet(){
