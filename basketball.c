@@ -2187,16 +2187,10 @@ void callBackAngle(){
 	
 	//sets main background
 	for(int y=0;y<240;y++){
-		
 		for(int x=0;x<320;x++){
-			
 			game.background[y][x] = mainBackground[y][x];	
 		}
-				
 	}
-	
-	
-	
 	*(pixel_ctrl_ptr+1) = 0xC8000000; // first store the address in the 
                                         // back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
