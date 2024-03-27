@@ -4242,31 +4242,29 @@ int main(void)
 			case GAMESTATE_ANGLE:
 			
 				callBackAngle();
-		
+				audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_POWER:
 			
 				callBackPower();
+				audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_TIMING:
 			
 				callBackTiming();
+				audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_VISUAL:
-			
-				
-				
 				callbackVisual(game.powerBar.velocity,game.aimBar.angle);
+				audio_playback_mono(samples, samples_n);
 				eraseVisual(1);
 				// redraw rim original color in case its green
 				if(game.net.score){
 					draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, 64704);
 				}
-				
-				
 				break;
 
 			case GAMESTATE_DIFFICULTY:
