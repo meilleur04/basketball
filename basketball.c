@@ -4337,127 +4337,115 @@ void displayLives(){
 	
 }
 //need to change net coordinates 
-void callBackDifficulty(){
-	
-	//if scored
-	if(game.net.score){
-		 
-		srand(time(0));
-		int newX;
-		int newY;
-		int prevX;
-		int prevY;
-		game.currentScore+=3;
-		*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-											// back buffer
-		/* now, swap the front/back buffers, to set the front buffer location */
-		wait_for_vsync();
-		/* initialize a pointer to the pixel buffer, used by drawing functions */
-		pixel_buffer_start = *pixel_ctrl_ptr;
-		//clear_screen(); // pixel_buffer_start points to the pixel buffer
-		
-		prevX =  game.net.x;
-		prevY = game.net.y;
-		
-		eraseBasketballNet();
-	
-	
-		newX = (rand()%(236 - 148 +1)) + 148;
-		newY = (rand()%(138 - 20 +1)) + 20;
-		
-		game.net.x = newX;
-		game.net.y = newY;
-		
-		drawBasketballNet();
-		
-		/* set back pixel buffer to start of SDRAM memory */
-		*(pixel_ctrl_ptr + 1) = 0xC0000000;
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-		//clear_screen();
-		
-		game.net.x = prevX;
-		game.net.y = prevY;		
-		eraseBasketballNet();
-		
-		game.net.x = newX;
-		game.net.y = newY;
-		drawBasketballNet();
-		
-		game.net.prevX = newX;
-		game.net.prevY = newY;
-		
-		game.gameState = GAMESTATE_ANGLE;
-		game.net.score = false;
-		
-		game.net.rightRimX = game.net.x +NET_OFFSET_X + NET_DIAMETER/2 +1; 
-		game.net.leftRimX = game.net.x +NET_OFFSET_X - NET_DIAMETER/2;	
-		
-	}else{
-		game.lives--;
-		//reset game if lives = 0
-		game.gameState = GAMESTATE_ANGLE;
-		
-		if(game.lives<=0){
-			displayHighScore();
-			game.gameState = GAMESTATE_ANGLE;
-			game.currentScore=0;
-			
-			int newX;
-			int newY;
-			int prevX;
-			int prevY;
-			
-			
-			*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-												// back buffer
-			/* now, swap the front/back buffers, to set the front buffer location */
-			wait_for_vsync();
-			/* initialize a pointer to the pixel buffer, used by drawing functions */
-			pixel_buffer_start = *pixel_ctrl_ptr;
-			//clear_screen(); // pixel_buffer_start points to the pixel buffer
-			
-			prevX =  game.net.x;
-			prevY = game.net.y;
-			
-			eraseBasketballNet();
-		
-		
-			newX = 275-NET_OFFSET_X;
-			newY = 70 - NET_OFFSET_Y;
-			
-			game.net.x = newX;
-			game.net.y = newY;
-			
-			drawBasketballNet();
-			
-			/* set back pixel buffer to start of SDRAM memory */
-			*(pixel_ctrl_ptr + 1) = 0xC0000000;
-			pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-			//clear_screen();
-			
-			game.net.x = prevX;
-			game.net.y = prevY;		
-			eraseBasketballNet();
-			
-			game.net.x = newX;
-			game.net.y = newY;
-			drawBasketballNet();
-			
-			game.net.prevX = newX;
-			game.net.prevY = newY;
-			
-			game.gameState = GAMESTATE_ANGLE;
-			game.net.score = false;	
-	
-			game.net.rightRimX = game.net.x +NET_OFFSET_X + NET_DIAMETER/2 +1; 
-			game.net.leftRimX = game.net.x +NET_OFFSET_X - NET_DIAMETER/2;	
-			game.lives = 3;
-			
-		}
-		
-	}
-	
+void callBackDifficulty() {
+    // If scored
+    if (game.net.score) {
+        srand(time(0));
+        int newX;
+        int newY;
+        int prevX;
+        int prevY;
+        game.currentScore += 3;
+
+        // Store the address in the back buffer
+        *(pixel_ctrl_ptr + 1) = 0xC8000000;
+        wait_for_vsync(); // Wait for vertical synchronization
+
+        // Initialize a pointer to the pixel buffer
+        pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
+        prevX = game.net.x;
+        prevY = game.net.y;
+
+        eraseBasketballNet();
+
+        newX = (rand() % (236 - 148 + 1)) + 148;
+        newY = (rand() % (138 - 20 + 1)) + 20;
+
+        game.net.x = newX;
+        game.net.y = newY;
+
+        drawBasketballNet();
+
+        // Set back pixel buffer to start of SDRAM memory
+        *pixel_ctrl_ptr = 0xC0000000;
+        pixel_buffer_start = *pixel_ctrl_ptr; // Draw on the front buffer
+
+        prevX = game.net.x;
+        prevY = game.net.y;
+        eraseBasketballNet();
+
+        game.net.x = newX;
+        game.net.y = newY;
+        drawBasketballNet();
+
+        game.net.prevX = newX;
+        game.net.prevY = newY;
+
+        game.gameState = GAMESTATE_ANGLE;
+        game.net.score = false;
+
+        game.net.rightRimX = game.net.x + NET_OFFSET_X + NET_DIAMETER / 2 + 1;
+        game.net.leftRimX = game.net.x + NET_OFFSET_X - NET_DIAMETER / 2;
+    } else {
+        game.lives--;
+        // Reset game if lives = 0
+        game.gameState = GAMESTATE_ANGLE;
+
+        if (game.lives <= 0) {
+            displayHighScore();
+            game.gameState = GAMESTATE_ANGLE;
+            game.currentScore = 0;
+
+            int newX;
+            int newY;
+            int prevX;
+            int prevY;
+
+            // Store the address in the back buffer
+            *(pixel_ctrl_ptr + 1) = 0xC8000000;
+            wait_for_vsync(); // Wait for vertical synchronization
+
+            // Initialize a pointer to the pixel buffer
+            pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
+            prevX = game.net.x;
+            prevY = game.net.y;
+
+            eraseBasketballNet();
+
+            newX = 275 - NET_OFFSET_X;
+            newY = 70 - NET_OFFSET_Y;
+
+            game.net.x = newX;
+            game.net.y = newY;
+
+            drawBasketballNet();
+
+            // Set back pixel buffer to start of SDRAM memory
+            *pixel_ctrl_ptr = 0xC0000000;
+            pixel_buffer_start = *pixel_ctrl_ptr; // Draw on the front buffer
+
+            prevX = game.net.x;
+            prevY = game.net.y;
+            eraseBasketballNet();
+
+            game.net.x = newX;
+            game.net.y = newY;
+            drawBasketballNet();
+
+            game.net.prevX = newX;
+            game.net.prevY = newY;
+
+            game.gameState = GAMESTATE_ANGLE;
+            game.net.score = false;
+            game.net.rightRimX = game.net.x + NET_OFFSET_X + NET_DIAMETER / 2 + 1;
+            game.net.leftRimX = game.net.x + NET_OFFSET_X - NET_DIAMETER / 2;
+            game.lives = 3;
+        }
+    }
 }
+
 
 void callBackTiming(){
 	
@@ -4498,165 +4486,139 @@ void callBackTiming(){
 		
 	}
 	
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
+	*(pixel_ctrl_ptr + 1) = 0xC8000000; // Store the address in the back buffer
+wait_for_vsync(); // Wait for vertical synchronization
 
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr;
-  	//clear_screen(); // pixel_buffer_start points to the pixel buffer
-	eraseAngleBackground();
-	erasePowerBar();
-	game.basketball.prevX = BALL_SPAWN_X;
-	game.basketball.prevY = BALL_SPAWN_Y;
-	eraseVisual(1);	
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-  	//clear_screen();
-	eraseAngleBackground();
-	game.basketball.prevX = BALL_SPAWN_X;
-	game.basketball.prevY = BALL_SPAWN_Y;	
-	erasePowerBar();
-	eraseVisual(1);
+// Initialize a pointer to the pixel buffer
+pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
+// Erase elements from the back buffer
+eraseAngleBackground();
+erasePowerBar();
+game.basketball.prevX = BALL_SPAWN_X;
+game.basketball.prevY = BALL_SPAWN_Y;
+eraseVisual(1);
+
+// Set back pixel buffer to start of SDRAM memory
+*pixel_ctrl_ptr = 0xC0000000;
+pixel_buffer_start = *pixel_ctrl_ptr; // Draw on the front buffer
+
+// Erase elements from the front buffer
+eraseAngleBackground();
+game.basketball.prevX = BALL_SPAWN_X;
+game.basketball.prevY = BALL_SPAWN_Y;
+erasePowerBar();
+eraseVisual(1);
 	
 }
-void callBackPower(){
-	
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
-	
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr;
-  	drawPowerBar();
-	//clear_screen(); // pixel_buffer_start points to the pixel buffer
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-	drawPowerBar();
-  	//clear_screen();
-	
-	int count = 0;
-	int sliderDirection = -1;
-	int heightRatio; 
-	
-	unsigned char byte1 = 0;
-	unsigned char byte2 = 0;
-	unsigned char byte3 = 0;
-	
-  	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
+void callBackPower() {
+    // Store the address in the back buffer
+    *(pixel_ctrl_ptr + 1) = 0xC8000000;
+    wait_for_vsync(); // Wait for vertical synchronization
 
-	int PS2_data, RVALID,RAVAIL;
-	
-	while(1){
-		if(count!=0){
-			eraseSlider();
-		}
-		//stores prev values of slider
-		game.powerBar.prevXSlider = game.powerBar.xSlider;
-		game.powerBar.prevYSlider = game.powerBar.ySlider;
-		
-		game.powerBar.ySlider += sliderDirection;
-		
-		if(game.powerBar.ySlider <= POWERBAR_START_y){
-			
-			game.powerBar.ySlider = POWERBAR_START_y + 1;
-			sliderDirection= 1;
-			
-		}
-		
-		if(game.powerBar.ySlider >= POWERBAR_END_y){
-			
-			game.powerBar.ySlider = POWERBAR_END_y - 1; 
-			sliderDirection = -1;
-		}
-		
-		drawSlider();
-		
-		//delay loop
-		int f = 8000;
-		while(f!=0){
-			
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
-		{
-				/* always save the last three bytes received */
-			byte3 = PS2_data & 0xFF;
-		}			
-			if(byte3 == 0x1B){ //if pressed and released spacebar, switch game states
-				
-				
-					
-					//eraseSlider();
-					//drawSlider();						
-					game.gameState = GAMESTATE_TIMING;
-						//sets angle
-						
-					double heightRatio = (double)((POWERBAR_END_y -1) - game.powerBar.ySlider)/(double)game.powerBar.height;
-					double adjustment = 8 * heightRatio;
-						
-					game.powerBar.velocity = 14 + (int) adjustment;
-						
-						
-					
-					*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-															// back buffer
-					/* now, swap the front/back buffers, to set the front buffer location */
-					wait_for_vsync();
-						/* initialize a pointer to the pixel buffer, used by drawing functions */
-					pixel_buffer_start = *pixel_ctrl_ptr;
-					
-					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-POWERBAR_START_y)][(game.powerBar.xSlider+7) - (POWERBAR_START_X) -1]);
-					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
-					//eraseSlider();
-					//drawSlider();
-						/* set back pixel buffer to start of SDRAM memory */
-					*(pixel_ctrl_ptr + 1) = 0xC0000000;
-					pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-					
-					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-POWERBAR_START_y)][(game.powerBar.xSlider+7) - (POWERBAR_START_X) -1]);
-					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );					
-					//eraseSlider();
-					//drawSlider();
-					
-					game.powerBar.ySlider = POWERBAR_END_y -1;	
-						
-					while(1){
-						
-						PS2_data = *(PS2_ptr);
-						RAVAIL = PS2_data & 0xFFFF0000;
-						
-						if(RAVAIL == 0){
-							PS2_data = *(PS2_ptr);
-							return;
-							
-						}
-						
-						
-					}	
-					
-					return;						
-						
-				
-				
-			}			
-			f--;
-			
-		}
+    // Initialize a pointer to the pixel buffer
+    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 
-		count = 1;
-		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer			
-		
-	}
-	
-	
-	
+    // Draw on the front buffer
+    drawPowerBar();
+
+    // Set back pixel buffer to start of SDRAM memory
+    *(pixel_ctrl_ptr + 1) = 0xC0000000;
+    pixel_buffer_start = *(pixel_ctrl_ptr + 1); // Draw on the back buffer
+
+    // Draw on the back buffer
+    drawPowerBar();
+    // clear_screen();
+
+    int count = 0;
+    int sliderDirection = -1;
+    int heightRatio;
+
+    unsigned char byte1 = 0;
+    unsigned char byte2 = 0;
+    unsigned char byte3 = 0;
+
+    volatile int *PS2_ptr = (int *)0xFF200100; // PS/2 port address
+
+    int PS2_data, RVALID, RAVAIL;
+
+    while (1) {
+        if (count != 0) {
+            eraseSlider();
+        }
+        // Stores prev values of slider
+        game.powerBar.prevXSlider = game.powerBar.xSlider;
+        game.powerBar.prevYSlider = game.powerBar.ySlider;
+
+        game.powerBar.ySlider += sliderDirection;
+
+        if (game.powerBar.ySlider <= POWERBAR_START_y) {
+            game.powerBar.ySlider = POWERBAR_START_y + 1;
+            sliderDirection = 1;
+        }
+
+        if (game.powerBar.ySlider >= POWERBAR_END_y) {
+            game.powerBar.ySlider = POWERBAR_END_y - 1;
+            sliderDirection = -1;
+        }
+
+        drawSlider();
+
+        // Delay loop
+        int f = 8000;
+        while (f != 0) {
+            PS2_data = *(PS2_ptr); // Read the Data register in the PS/2 port
+            RVALID = (PS2_data & 0x8000); // Extract the RVALID field
+            if (RVALID != 0) {
+                /* always save the last three bytes received */
+                byte3 = PS2_data & 0xFF;
+            }
+            if (byte3 == 0x1B) { // If pressed and released spacebar, switch game states
+                game.gameState = GAMESTATE_TIMING;
+
+                // Sets angle
+                double heightRatio = (double)((POWERBAR_END_y - 1) - game.powerBar.ySlider) / (double)game.powerBar.height;
+                double adjustment = 8 * heightRatio;
+
+                game.powerBar.velocity = 14 + (int)adjustment;
+
+                *(pixel_ctrl_ptr + 1) = 0xC8000000; // First store the address in the back buffer
+                wait_for_vsync();
+                pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
+                draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider - POWERBAR_START_y)][(game.powerBar.xSlider + 7) - (POWERBAR_START_X) - 1]);
+                draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0);
+
+                *(pixel_ctrl_ptr + 1) = 0xC0000000; // Set back pixel buffer to start of SDRAM memory
+                pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
+                draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider - POWERBAR_START_y)][(game.powerBar.xSlider + 7) - (POWERBAR_START_X) - 1]);
+                draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0);
+
+                game.powerBar.ySlider = POWERBAR_END_y - 1;
+
+                while (1) {
+                    PS2_data = *(PS2_ptr);
+                    RAVAIL = PS2_data & 0xFFFF0000;
+
+                    if (RAVAIL == 0) {
+                        PS2_data = *(PS2_ptr);
+                        return;
+                    }
+                }
+
+                return;
+            }
+            f--;
+        }
+
+        count = 1;
+        wait_for_vsync(); // Swap front and back buffers on VGA vertical sync
+        *(pixel_ctrl_ptr + 1) = (*(pixel_ctrl_ptr + 1) == 0xC8000000) ? 0xC0000000 : 0xC8000000; // Toggle back buffer
+        pixel_buffer_start = *(pixel_ctrl_ptr + 1); // New back buffer
+    }
 }
+
 
 void drawSlider(){
 	
