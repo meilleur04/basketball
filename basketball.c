@@ -4519,12 +4519,12 @@ void callBackPower(){
   	wait_for_vsync();
 	
     /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr;
+  	pixel_buffer_start = *pixel_ctrl_ptr -1 ;
   	drawPowerBar();
 	//clear_screen(); // pixel_buffer_start points to the pixel buffer
     /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
+  	*(pixel_ctrl_ptr) = 0xC0000000;
+  	pixel_buffer_start = *(pixel_ctrl_ptr); // we draw on the back buffer
 	drawPowerBar();
   	//clear_screen();
 	
@@ -4595,7 +4595,7 @@ void callBackPower(){
 					*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
 															// back buffer
 					/* now, swap the front/back buffers, to set the front buffer location */
-					wait_for_vsync();
+					//wait_for_vsync();
 						/* initialize a pointer to the pixel buffer, used by drawing functions */
 					pixel_buffer_start = *pixel_ctrl_ptr;
 					
@@ -4638,8 +4638,8 @@ void callBackPower(){
 		}
 
 		count = 1;
-		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer			
+		//wait_for_vsync(); // swap front and back buffers on VGA vertical sync
+		//pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer			
 		
 	}
 	
