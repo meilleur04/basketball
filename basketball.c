@@ -4512,23 +4512,9 @@ eraseVisual(1);
 	
 }
 void callBackPower() {
-    // Store the address in the back buffer
-    *(pixel_ctrl_ptr + 1) = 0xC8000000;
-    wait_for_vsync(); // Wait for vertical synchronization
-
-    // Initialize a pointer to the pixel buffer
-    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 
     // Draw on the front buffer
     drawPowerBar();
-
-    // Set back pixel buffer to start of SDRAM memory
-    *(pixel_ctrl_ptr + 1) = 0xC0000000;
-    pixel_buffer_start = *(pixel_ctrl_ptr + 1); // Draw on the back buffer
-
-    // Draw on the back buffer
-    drawPowerBar();
-    // clear_screen();
 
     int count = 0;
     int sliderDirection = -1;
@@ -4582,16 +4568,6 @@ void callBackPower() {
 
                 game.powerBar.velocity = 14 + (int)adjustment;
 
-                *(pixel_ctrl_ptr + 1) = 0xC8000000; // First store the address in the back buffer
-                wait_for_vsync();
-                pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-
-                draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider - POWERBAR_START_y)][(game.powerBar.xSlider + 7) - (POWERBAR_START_X) - 1]);
-                draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0);
-
-                *(pixel_ctrl_ptr + 1) = 0xC0000000; // Set back pixel buffer to start of SDRAM memory
-                pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-
                 draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider - POWERBAR_START_y)][(game.powerBar.xSlider + 7) - (POWERBAR_START_X) - 1]);
                 draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0);
 
@@ -4613,9 +4589,6 @@ void callBackPower() {
         }
 
         count = 1;
-        wait_for_vsync(); // Swap front and back buffers on VGA vertical sync
-        *(pixel_ctrl_ptr + 1) = (*(pixel_ctrl_ptr + 1) == 0xC8000000) ? 0xC0000000 : 0xC8000000; // Toggle back buffer
-        pixel_buffer_start = *(pixel_ctrl_ptr + 1); // New back buffer
     }
 }
 
@@ -4738,9 +4711,6 @@ void callBackAngle(){
 		
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 6447);
-		
-
-		
 
 		int f= 50000;
 		while(f!=0){
@@ -4795,32 +4765,18 @@ void callBackAngle(){
 				//clear_screen();
 				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
 				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
-				
-				
 				while(1){
-						
 					PS2_data = *(PS2_ptr);
 					RAVAIL = PS2_data & 0xFFFF0000;
-						
 					if(RAVAIL == 0){
-						return; 
-							
+						return; 		
 					}
-						
-						
 				}				
-					
-				return;						
-					
-				
-				
+				return;										
 			}			
 			f--;
 			
 		}
-		
-		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer	
 		
 	}	
 	
