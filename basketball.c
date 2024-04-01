@@ -4680,10 +4680,6 @@ void callBackAngle(){
 	game.aimBar.yEnd = BALL_SPAWN_Y - 30 + game.aimBar.pointY[angleCounter];	
 
 	while (1) {
-		
-		
-		
-			
 		if(count!=0){
 			
 			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 0xffff);
@@ -4711,7 +4707,6 @@ void callBackAngle(){
 		
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 6447);
-
 		int f= 50000;
 		while(f!=0){
 			
@@ -4723,12 +4718,7 @@ void callBackAngle(){
 				byte3 = PS2_data & 0xFF;
 			}
 			
-			if(byte3 == 0x1C){ //if pressed and released spacebar, switch game states
-				
-				
-					
-					
-											
+			if(byte3 == 0x1C){ //if pressed and released spacebar, switch game states						
 				game.gameState = GAMESTATE_POWER;
 				//sets angle
 				//going up
@@ -4751,7 +4741,7 @@ void callBackAngle(){
 				*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
 															// back buffer
 				/* now, swap the front/back buffers, to set the front buffer location */
-				wait_for_vsync();
+				
 						/* initialize a pointer to the pixel buffer, used by drawing functions */
 				pixel_buffer_start = *pixel_ctrl_ptr;
 				//clear_screen(); // pixel_buffer_start points to the pixel buffer
@@ -4765,19 +4755,19 @@ void callBackAngle(){
 				//clear_screen();
 				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
 				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
+				
 				while(1){
 					PS2_data = *(PS2_ptr);
 					RAVAIL = PS2_data & 0xFFFF0000;
+						
 					if(RAVAIL == 0){
 						return; 		
-					}
+					}	
 				}				
-				return;										
+				return;						
 			}			
-			f--;
-			
+			f--;	
 		}
-		
 	}	
 	
 	
