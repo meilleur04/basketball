@@ -101,7 +101,13 @@ struct audio_t {
 
 struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 
-#define ABS(x) (((x) > 0) ? (x) : -(x))
+double ABS(double x) {
+	if (x > 0) {
+		return x;
+	} else {
+		return -x;
+	}
+}
 
 
 volatile int pixel_buffer_start;
