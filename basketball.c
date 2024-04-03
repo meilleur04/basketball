@@ -101,36 +101,11 @@ struct audio_t {
 
 struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 
-#define SDRAM_BASE 0xC0000000
-#define FPGA_ONCHIP_BASE 0xC8000000
-#define FPGA_CHAR_BASE 0xC9000000
-#define LEDR_BASE 0xFF200000
-#define HEX3_HEX0_BASE 0xFF200020
-#define HEX5_HEX4_BASE 0xFF200030
-#define SW_BASE 0xFF200040
-#define KEY_BASE 0xFF200050
-#define TIMER_BASE 0xFF202000
-#define PIXEL_BUF_CTRL_BASE 0xFF203020
-#define CHAR_BUF_CTRL_BASE 0xFF203030
-#define WHITE 0xFFFF
-#define YELLOW 0xFFE0
-#define RED 0xF800
-#define GREEN 0x07E0
-#define BLUE 0x001F
-#define CYAN 0x07FF
-#define MAGENTA 0xF81F
-#define GREY 0xC618
-#define PINK 0xFC18
-#define ORANGE 0xFC00
-#define BLACK 0x0000
 #define ABS(x) (((x) > 0) ? (x) : -(x))
 #define RESOLUTION_X 320
 #define RESOLUTION_Y 240
 #define BOX_LEN 2
 #define NUM_BOXES 1
-#define FALSE 0
-#define TRUE 1
-int samples_n = 10000;
 #define GAMESTATE_INTRO 0
 #define GAMESTATE_CHARACTER 1
 #define GAMESTATE_INSTRUCTION 2
@@ -163,6 +138,7 @@ volatile int pixel_buffer_start;
 struct Game game;
 const int anglePointY[10] = {23,20,17,14,11,8,5,3,1,0};
 const int anglePointX[10] = {28,28,27,26,24,21,18,15,11,6};
+int samples_n = 10000;
 
 int samples[] = {
 0xffd69789, 0xffa41d60, 0xffaa0b18, 0xffb3190a,
@@ -5149,7 +5125,7 @@ bool drawVisual(){
 		if(game.net.score){
 			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y,64704);
 		}
-		return FALSE;
+		return 0;
 	}
 	// code for drawing the boxes and lines (not shown)
 	for(int y=game.basketball.y;y<game.basketball.y+BALL_DIAMETER;y++){
@@ -5165,11 +5141,11 @@ bool drawVisual(){
 
 	}
 	if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, GREEN);
+			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, 0x07E0);
 		}
 	// code for updating the locations of boxes (not shown)
 	
-	return TRUE;
+	return 1;
 }
 
 void delay(int delayT){
@@ -5278,7 +5254,7 @@ void plot_pixel(int x, int y, short int line_color)
 void clear_screen(){
 	for (int x=0; x< RESOLUTION_X; x++){
 		for (int y = 0 ; y<RESOLUTION_Y; y++){
-			plot_pixel(x,y,BLACK);
+			plot_pixel(x,y,0x0000);
 		}
 	}
 }
