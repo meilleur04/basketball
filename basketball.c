@@ -5094,7 +5094,6 @@ void callbackVisual(double velocityInitial, double theta){
 	bool exit_drawvisual=false;
 	while (1)
     {	
-			//erase
 		eraseVisual(count);
 		//update directions
 		updateVisual();
@@ -5198,9 +5197,7 @@ void updateVisual(){
 			game.basketball.dx= -1* abs(game.basketball.dx/2);
 			game.net.score =true;
 			game.basketball.dy =1;
-			game.basketball.dx = -1;
-			
-			
+			game.basketball.dx = -1;			
 		}else{
 			game.basketball.x = game.net.rightRimX+ 1;
 			game.basketball.dx= abs(game.basketball.dx/2);
