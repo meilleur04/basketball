@@ -4248,9 +4248,6 @@ int main(void)
 			case GAMESTATE_POWER:
 			
 				callBackPower();
-				while(1){
-					printf("h");
-				}
 				//audio_playback_mono(samples, samples_n);
 				break;
 			
@@ -4488,23 +4485,6 @@ void callBackTiming(){
 		}
 		
 	}
-	
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // Store the address in the back buffer
-wait_for_vsync(); // Wait for vertical synchronization
-
-// Initialize a pointer to the pixel buffer
-pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-
-// Erase elements from the back buffer
-eraseAngleBackground();
-erasePowerBar();
-game.basketball.prevX = BALL_SPAWN_X;
-game.basketball.prevY = BALL_SPAWN_Y;
-eraseVisual(1);
-
-// Set back pixel buffer to start of SDRAM memory
-*pixel_ctrl_ptr = 0xC0000000;
-pixel_buffer_start = *pixel_ctrl_ptr; // Draw on the front buffer
 
 // Erase elements from the front buffer
 eraseAngleBackground();
