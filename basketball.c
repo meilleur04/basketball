@@ -3,19 +3,9 @@
 #include <stdbool.h>
 #include <time.h>
 #include <math.h>
-void set_A9_IRQ_stack ();
-void config_GIC ();
-void config_interval_timer ();
-void config_KEYs ();
-void enable_A9_interrupts ();
-void disable_A9_interrupts();
-void config_PS2();
-void keyboard_ISR();
-void config_interrupt(int N, int CPU_target);
 void eraseVisual(int count);
 void updateVisual();
 bool drawVisual();
-void delay(int delayT);
 void callbackVisual(double velocityInitial, double theta);
 void callBackIntro();
 void drawBackground();
@@ -28,8 +18,6 @@ void drawCharacter();
 void drawBasketballNet();
 void drawAngleBackground();
 void eraseAngleBackground();
-void eraseAngleLine();
-void drawAngleLine();
 void callBackPower();
 void drawPowerBar();
 void drawSlider();
@@ -5107,13 +5095,6 @@ bool drawVisual(){
 	// code for updating the locations of boxes (not shown)
 	
 	return 1;
-}
-
-void delay(int delayT){
-	int f = delayT;
-	while(f !=0){
-		f--;
-	}
 }
 
 void updateVisual(){
