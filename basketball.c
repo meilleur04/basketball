@@ -102,16 +102,6 @@ struct audio_t {
 struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 
 #define ABS(x) (((x) > 0) ? (x) : -(x))
-#define BALL_DIAMETER 15
-#define NET_OFFSET_X 39
-#define NET_OFFSET_Y 31
-#define PLAYER_START_X 0
-#define PLAYER_END_X 60
-#define PLAYER_START_Y 150
-#define PLAYER_END_Y 231 
-#define POWERBAR_START_X 52
-#define POWERBAR_START_y 160
-#define POWERBAR_END_y 230
 
 
 volatile int pixel_buffer_start;
@@ -4128,13 +4118,13 @@ int main(void)
 	game.basketball.x=37;game.basketball.y= 138; game.basketball.dy =0;game.basketball.dx=0; game.basketball.prevX=0; game.basketball.prevY=0;
 	game.basketball.startX = 37; game.basketball.startY=138;
 	
-	game.net.x= 275 - NET_OFFSET_X;game.net.y= 70 - NET_OFFSET_Y;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
-	game.net.rightRimX = game.net.x +NET_OFFSET_X + 31/2 +1; game.net.leftRimX = game.net.x +NET_OFFSET_X - 31/2;
+	game.net.x= 275 - 39;game.net.y= 70 - 31;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
+	game.net.rightRimX = game.net.x +39 + 31/2 +1; game.net.leftRimX = game.net.x +39 - 31/2;
 
 	
 	game.player.x=0; game.player.y=0;game.player.prevX=0;game.player.prevY=0;game.player.playerID=0;
 	
-	game.powerBar.xSlider=POWERBAR_START_X+1; game.powerBar.ySlider=POWERBAR_END_y-1; game.powerBar.prevXSlider=0; game.powerBar.prevYSlider=0; game.powerBar.width=10; 
+	game.powerBar.xSlider=52+1; game.powerBar.ySlider=230-1; game.powerBar.prevXSlider=0; game.powerBar.prevYSlider=0; game.powerBar.width=10; 
 	game.powerBar.height=70;game.powerBar.xFixed=0;game.powerBar.yFixed=0;
 	
 	for(int y=0;y<70;y++){
@@ -4240,7 +4230,7 @@ int main(void)
 				eraseVisual(1);
 				// redraw rim original color in case its green
 				if(game.net.score){
-					draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, 64704);
+					draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 64704);
 				}
 				break;
 
@@ -4362,8 +4352,8 @@ void callBackDifficulty() {
         game.gameState = 3;
         game.net.score = false;
 
-        game.net.rightRimX = game.net.x + NET_OFFSET_X + 31 / 2 + 1;
-        game.net.leftRimX = game.net.x + NET_OFFSET_X - 31 / 2;
+        game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
+        game.net.leftRimX = game.net.x + 39 - 31 / 2;
     } else {
         game.lives--;
         // Reset game if lives = 0
@@ -4391,8 +4381,8 @@ void callBackDifficulty() {
 
             eraseBasketballNet();
 
-            newX = 275 - NET_OFFSET_X;
-            newY = 70 - NET_OFFSET_Y;
+            newX = 275 - 39;
+            newY = 70 - 31;
 
             game.net.x = newX;
             game.net.y = newY;
@@ -4416,8 +4406,8 @@ void callBackDifficulty() {
 
             game.gameState = 3;
             game.net.score = false;
-            game.net.rightRimX = game.net.x + NET_OFFSET_X + 31 / 2 + 1;
-            game.net.leftRimX = game.net.x + NET_OFFSET_X - 31 / 2;
+            game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
+            game.net.leftRimX = game.net.x + 39 - 31 / 2;
             game.lives = 3;
         }
     }
@@ -4498,16 +4488,16 @@ void callBackPower(){
 		
 		game.powerBar.ySlider += sliderDirection;
 		
-		if(game.powerBar.ySlider <= POWERBAR_START_y){
+		if(game.powerBar.ySlider <= 160){
 			
-			game.powerBar.ySlider = POWERBAR_START_y + 1;
+			game.powerBar.ySlider = 160 + 1;
 			sliderDirection= 1;
 			
 		}
 		
-		if(game.powerBar.ySlider >= POWERBAR_END_y){
+		if(game.powerBar.ySlider >= 230){
 			
-			game.powerBar.ySlider = POWERBAR_END_y - 1; 
+			game.powerBar.ySlider = 230 - 1; 
 			sliderDirection = -1;
 		}
 		
@@ -4528,7 +4518,7 @@ void callBackPower(){
 					game.gameState = 5;
 						//sets angle
 						
-					double heightRatio = (double)((POWERBAR_END_y -1) - game.powerBar.ySlider)/(double)game.powerBar.height;
+					double heightRatio = (double)((230 -1) - game.powerBar.ySlider)/(double)game.powerBar.height;
 					double adjustment = 8 * heightRatio;
 						
 					game.powerBar.velocity = 14 + (int) adjustment;
@@ -4540,10 +4530,10 @@ void callBackPower(){
 						/* initialize a pointer to the pixel buffer, used by drawing functions */
 					pixel_buffer_start = *pixel_ctrl_ptr;
 					
-					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-POWERBAR_START_y)][(game.powerBar.xSlider+7) - (POWERBAR_START_X) -1]);
+					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-160)][(game.powerBar.xSlider+7) - (52) -1]);
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
 					
-					game.powerBar.ySlider = POWERBAR_END_y -1;	
+					game.powerBar.ySlider = 230 -1;	
 						
 					while(1){
 						PS2_data = *(PS2_ptr);
@@ -4572,18 +4562,18 @@ void drawSlider(){
 
 void eraseSlider(){
 	
-	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-POWERBAR_START_y)][(game.powerBar.prevXSlider+7) - (POWERBAR_START_X) -1]  );
+	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );
 	
 	
 }
 void drawPowerBar(){
 	
-	for(int y = POWERBAR_START_y;y<POWERBAR_END_y;y++){
+	for(int y = 160;y<230;y++){
 		
-		for(int x= POWERBAR_START_X; x< 62; x++){
+		for(int x= 52; x< 62; x++){
 			
 				
-				plot_pixel(x,y,game.powerBar.powerBarArray[y-POWERBAR_START_y][x-POWERBAR_START_X]);
+				plot_pixel(x,y,game.powerBar.powerBarArray[y-160][x-52]);
 			
 		}
 		
@@ -4592,9 +4582,9 @@ void drawPowerBar(){
 
 void erasePowerBar(){
 	
-	for(int y = POWERBAR_START_y;y<POWERBAR_END_y;y++){
+	for(int y = 160;y<230;y++){
 		
-		for(int x= POWERBAR_START_X; x< 62; x++){
+		for(int x= 52; x< 62; x++){
 			
 				
 				plot_pixel(x,y,game.background[y][x]);
@@ -4893,10 +4883,10 @@ void callBackCharacter(){
 					for(int y=0; y<81; y++){
 						for(int x=0; x<69; x++){
 							game.player.playerModel[y][x] = stephShootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
+							game.player.x = 0;
+							game.player.prevX = 60;
+							game.player.y = 150;
+							game.player.y = 231;
 							game.player.playerID = 1;	
 						}	
 					}		
@@ -4912,10 +4902,10 @@ void callBackCharacter(){
 					for(int y=0; y<81; y++){
 						for(int x=0; x<69; x++){
 							game.player.playerModel[y][x] = FFVshootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
+							game.player.x = 0;
+							game.player.prevX = 60;
+							game.player.y = 150;
+							game.player.y = 231;
 							game.player.playerID = 2;								
 						}	
 					}
@@ -4930,10 +4920,10 @@ void callBackCharacter(){
 					for(int y=0; y<81; y++){
 						for(int x=0; x<69; x++){
 							game.player.playerModel[y][x] = kawhiLeonardShootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
+							game.player.x = 0;
+							game.player.prevX = 60;
+							game.player.y = 150;
+							game.player.y = 231;
 							game.player.playerID = 3;									
 						}	
 					}		
@@ -4949,10 +4939,10 @@ void callBackCharacter(){
 					for(int y=0; y<81; y++){
 						for(int x=0; x<69; x++){			
 							game.player.playerModel[y][x] = kobeShootingModel[y][x];
-							game.player.x = PLAYER_START_X;
-							game.player.prevX = PLAYER_END_X;
-							game.player.y = PLAYER_START_Y;
-							game.player.y = PLAYER_END_Y;
+							game.player.x = 0;
+							game.player.prevX = 60;
+							game.player.y = 150;
+							game.player.y = 231;
 							game.player.playerID = 4;				
 						}	
 					}		
@@ -5019,10 +5009,10 @@ void drawBackground(){
 }
 
 void drawCharacter(){
-	for(int y=PLAYER_START_Y;y<PLAYER_END_Y;y++){
-		for(int x=PLAYER_START_X;x<PLAYER_END_X;x++){
-			if(game.player.playerModel[y-PLAYER_START_Y][x]!=51168){
-				plot_pixel(x,y,game.player.playerModel[y-PLAYER_START_Y][x - PLAYER_START_X]);
+	for(int y=150;y<231;y++){
+		for(int x=0;x<60;x++){
+			if(game.player.playerModel[y-150][x]!=51168){
+				plot_pixel(x,y,game.player.playerModel[y-150][x - 0]);
 			}
 		}
 	}		
@@ -5030,15 +5020,15 @@ void drawCharacter(){
 }
 void callbackScore(){
 	
-	if( game.basketball.prevY+BALL_DIAMETER/2<=game.net.y+NET_OFFSET_Y && game.basketball.x +BALL_DIAMETER/2>= game.net.x && game.basketball.y+ BALL_DIAMETER/2>= game.net.y+BALL_DIAMETER && game.basketball.x +BALL_DIAMETER/2<= game.net.x + NET_OFFSET_X + BALL_DIAMETER*1.5 ){
+	if( game.basketball.prevY+15/2<=game.net.y+31 && game.basketball.x +15/2>= game.net.x && game.basketball.y+ 15/2>= game.net.y+15 && game.basketball.x +15/2<= game.net.x + 39 + 15*1.5 ){
 		double dx = game.basketball.x -game.basketball.prevX;
 		double dy = game.basketball.y-game.basketball.prevY;
 		double m;
 		if (dx != 0 && dy!=0){
 			m = dy/dx;
-			double intersectX = (game.net.y+NET_OFFSET_Y - (game.basketball.prevY+BALL_DIAMETER/2)+ m*game.basketball.prevX+BALL_DIAMETER/2)/m;
+			double intersectX = (game.net.y+31 - (game.basketball.prevY+15/2)+ m*game.basketball.prevX+15/2)/m;
 
-				if (intersectX<= game.net.x+NET_OFFSET_X+31/2.0  && intersectX>= game.net.x+NET_OFFSET_X-31/2.0 ){
+				if (intersectX<= game.net.x+39+31/2.0  && intersectX>= game.net.x+39-31/2.0 ){
 					game.basketball.dy = 1;
 					
 					if(game.basketball.dx < 0){
@@ -5047,8 +5037,8 @@ void callbackScore(){
 						game.basketball.dx =1;
 					}
 					game.net.score =true;
-					game.basketball.x = game.net.x+NET_OFFSET_X - BALL_DIAMETER/2;
-					game.basketball.y = game.net.y+NET_OFFSET_Y - BALL_DIAMETER/2;
+					game.basketball.x = game.net.x+39 - 15/2;
+					game.basketball.y = game.net.y+31 - 15/2;
 				}
 		}
 	}
@@ -5098,19 +5088,19 @@ void callbackVisual(double velocityInitial, double theta){
 }
 
 bool drawVisual(){
-	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +BALL_DIAMETER>=240 ){
+	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +15>=240 ){
 		game.basketball.y = game.basketball.startY;
 		game.basketball.x = game.basketball.startX;
 		game.gameState=8;
 		if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y,64704);
+			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31,64704);
 		}
 		return 0;
 	}
 	// code for drawing the boxes and lines (not shown)
-	for(int y=game.basketball.y;y<game.basketball.y+BALL_DIAMETER;y++){
+	for(int y=game.basketball.y;y<game.basketball.y+15;y++){
 
-		for(int x=game.basketball.x;x<game.basketball.x+BALL_DIAMETER;x++){
+		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
 
 			if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
@@ -5121,7 +5111,7 @@ bool drawVisual(){
 
 	}
 	if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y, 0x07E0);
+			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 0x07E0);
 		}
 	// code for updating the locations of boxes (not shown)
 	
@@ -5144,17 +5134,17 @@ void updateVisual(){
 	bool collisionY= false;
 	
 	// left rim
-	if(distance (game.basketball.x+BALL_DIAMETER/2 +game.basketball.dx, game.basketball.y +BALL_DIAMETER/2+game.basketball.dy , game.net.leftRimX, game.net.y + NET_OFFSET_Y) < BALL_DIAMETER/2 +2){
+	if(distance (game.basketball.x+15/2 +game.basketball.dx, game.basketball.y +15/2+game.basketball.dy , game.net.leftRimX, game.net.y + 31) < 15/2 +2){
 		collisionX = true;
 		//outer rim 
 		if(game.basketball.x < game.net.leftRimX){
-			game.basketball.x = game.net.leftRimX - BALL_DIAMETER;
+			game.basketball.x = game.net.leftRimX - 15;
 			game.basketball.dx= -1* abs(game.basketball.dx/2);
 		}else{
 			//inner rim
 			collisionY=true;
-			game.basketball.x = game.net.leftRimX + BALL_DIAMETER +1;
-			game.basketball.y = game.net.y +NET_OFFSET_Y -1;
+			game.basketball.x = game.net.leftRimX + 15 +1;
+			game.basketball.y = game.net.y +31 -1;
 			game.basketball.dx= abs(game.basketball.dx/2);
 			game.net.score = true;
 			game.basketball.dy =1;
@@ -5163,14 +5153,14 @@ void updateVisual(){
 		
 	}
 	// right rim
-	if(distance (game.basketball.x+BALL_DIAMETER/2 +game.basketball.dx, game.basketball.y +BALL_DIAMETER/2+game.basketball.dy , game.net.rightRimX, game.net.y + NET_OFFSET_Y) < BALL_DIAMETER/2 +2){
+	if(distance (game.basketball.x+15/2 +game.basketball.dx, game.basketball.y +15/2+game.basketball.dy , game.net.rightRimX, game.net.y + 31) < 15/2 +2){
 		collisionX = true;
 		//inner irm
 		if(game.basketball.x < game.net.rightRimX){
 			collisionY=true;
 			printf("right rim1");
-			game.basketball.x = game.net.rightRimX - BALL_DIAMETER -1;
-			game.basketball.y = game.net.y +NET_OFFSET_Y -1;
+			game.basketball.x = game.net.rightRimX - 15 -1;
+			game.basketball.y = game.net.y +31 -1;
 			game.basketball.dx= -1* abs(game.basketball.dx/2);
 			game.net.score =true;
 			game.basketball.dy =1;
@@ -5182,16 +5172,16 @@ void updateVisual(){
 		
 	}
 	
-	if (game.basketball.x >= 320-BALL_DIAMETER)
+	if (game.basketball.x >= 320-15)
 		game.basketball.dx= -1* abs(game.basketball.dx/1.5);
 	if (game.basketball.x <= 0)
 		game.basketball.dx= abs(game.basketball.dx/2);
-	if(game.basketball.y >= 240-BALL_DIAMETER){
+	if(game.basketball.y >= 240-15){
 		game.basketball.dy = -1*abs(game.basketball.dy/2);
 		
 		game.basketball.dx = 0;
 	}
-	if(game.basketball.y +BALL_DIAMETER<240){
+	if(game.basketball.y +15<240){
 		game.basketball.dy+=1;
 	}
 	
@@ -5206,9 +5196,9 @@ void updateVisual(){
 
 void eraseVisual(int count){
 	if(count !=0){
-		for(int y=game.basketball.prevY;y<game.basketball.prevY+BALL_DIAMETER;y++){
+		for(int y=game.basketball.prevY;y<game.basketball.prevY+15;y++){
 
-			for(int x=game.basketball.prevX;x<game.basketball.prevX+BALL_DIAMETER;x++){
+			for(int x=game.basketball.prevX;x<game.basketball.prevX+15;x++){
 
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
 					plot_pixel(x,y,mainBackground[y][x]);
