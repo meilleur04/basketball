@@ -102,10 +102,6 @@ struct audio_t {
 struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 
 #define ABS(x) (((x) > 0) ? (x) : -(x))
-#define RESOLUTION_X 320
-#define RESOLUTION_Y 240
-#define BOX_LEN 2
-#define NUM_BOXES 1
 #define GAMESTATE_INTRO 0
 #define GAMESTATE_CHARACTER 1
 #define GAMESTATE_INSTRUCTION 2
@@ -115,7 +111,6 @@ struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 #define GAMESTATE_VISUAL 6
 #define GAMESTATE_SCORE 7
 #define GAMESTATE_DIFFICULTY 8
-#define GAMESTATE_END -1
 #define BALL_SPAWN_X 37
 #define BALL_SPAWN_Y 138
 #define BALL_DIAMETER 15
@@ -4192,9 +4187,9 @@ int main(void)
 		angle+=5;
 	}
 	
-	for (int y=0 ; y < RESOLUTION_Y; y++)
+	for (int y=0 ; y < 240; y++)
 	{
-		for (int x=0 ; x < RESOLUTION_X; x++)
+		for (int x=0 ; x < 320; x++)
 		{
 			game.background[y][x] = introScreen[y][x];
 		}
@@ -4272,7 +4267,7 @@ int main(void)
 				displayLives();
 				break;
 			
-			case GAMESTATE_END:
+			case -1:
 			
 				break;
 				
@@ -5118,7 +5113,7 @@ void callbackVisual(double velocityInitial, double theta){
 }
 
 bool drawVisual(){
-	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +BALL_DIAMETER>=RESOLUTION_Y ){
+	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +BALL_DIAMETER>=240 ){
 		game.basketball.y = game.basketball.startY;
 		game.basketball.x = game.basketball.startX;
 		game.gameState=GAMESTATE_DIFFICULTY;
@@ -5133,7 +5128,7 @@ bool drawVisual(){
 		for(int x=game.basketball.x;x<game.basketball.x+BALL_DIAMETER;x++){
 
 			if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
-				if(x>=0 && x<=RESOLUTION_X && y >= 0 && y<=RESOLUTION_Y){
+				if(x>=0 && x<=320 && y >= 0 && y<=240){
 					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
 				}
 			}
@@ -5202,16 +5197,16 @@ void updateVisual(){
 		
 	}
 	
-	if (game.basketball.x >= RESOLUTION_X-BALL_DIAMETER)
+	if (game.basketball.x >= 320-BALL_DIAMETER)
 		game.basketball.dx= -1* abs(game.basketball.dx/1.5);
 	if (game.basketball.x <= 0)
 		game.basketball.dx= abs(game.basketball.dx/2);
-	if(game.basketball.y >= RESOLUTION_Y-BALL_DIAMETER){
+	if(game.basketball.y >= 240-BALL_DIAMETER){
 		game.basketball.dy = -1*abs(game.basketball.dy/2);
 		
 		game.basketball.dx = 0;
 	}
-	if(game.basketball.y +BALL_DIAMETER<RESOLUTION_Y){
+	if(game.basketball.y +BALL_DIAMETER<240){
 		game.basketball.dy+=1;
 	}
 	
@@ -5230,7 +5225,7 @@ void eraseVisual(int count){
 
 			for(int x=game.basketball.prevX;x<game.basketball.prevX+BALL_DIAMETER;x++){
 
-				if(x>=0 && x<=RESOLUTION_X && y >= 0 && y<=RESOLUTION_Y){
+				if(x>=0 && x<=320 && y >= 0 && y<=240){
 					plot_pixel(x,y,mainBackground[y][x]);
 					//redraws net
 					if(x>= game.net.x && x <game.net.x+80 && y>= game.net.y && y <game.net.y+47){
@@ -5252,8 +5247,8 @@ void plot_pixel(int x, int y, short int line_color)
 }
 
 void clear_screen(){
-	for (int x=0; x< RESOLUTION_X; x++){
-		for (int y = 0 ; y<RESOLUTION_Y; y++){
+	for (int x=0; x< 320; x++){
+		for (int y = 0 ; y<240; y++){
 			plot_pixel(x,y,0x0000);
 		}
 	}
