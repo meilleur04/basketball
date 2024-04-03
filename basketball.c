@@ -1,5 +1,3 @@
-//FUNCTION HEADERS
-//*********************************
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -45,14 +43,13 @@ void displayLives();
 void displayScore();
 void displayHighScore();
 void wait_for_vsync();
-void 
-audio_playback_mono(int *samples, int n);
-
+void audio_playback_mono(int *samples, int n);
 double distance(int x1, int y1, int x2, int y2);
 
 struct Basketball{
 	int dy,dx, x, y, prevX, prevY, startX,startY;
 };
+
 struct Net{
 	int x, y, prevX, prevY, leftRimX, leftRimY, rightRimX, rightRimY;;
 	bool score;
@@ -103,26 +100,18 @@ struct audio_t {
 };
 
 struct audio_t *const audiop = ((struct audio_t *)0xff203040);
-//****************************************
-//END FUNCTION  HEADERS 
-/* This files provides address values that exist in the system */
 
-
-#define SDRAM_BASE            0xC0000000
-#define FPGA_ONCHIP_BASE      0xC8000000
-#define FPGA_CHAR_BASE        0xC9000000
-
-/* Cyclone V FPGA devices */
-#define LEDR_BASE             0xFF200000
-#define HEX3_HEX0_BASE        0xFF200020
-#define HEX5_HEX4_BASE        0xFF200030
-#define SW_BASE               0xFF200040
-#define KEY_BASE              0xFF200050
-#define TIMER_BASE            0xFF202000
-#define PIXEL_BUF_CTRL_BASE   0xFF203020
-#define CHAR_BUF_CTRL_BASE    0xFF203030
-//sdsdf
-/* VGA colors */
+#define SDRAM_BASE 0xC0000000
+#define FPGA_ONCHIP_BASE 0xC8000000
+#define FPGA_CHAR_BASE 0xC9000000
+#define LEDR_BASE 0xFF200000
+#define HEX3_HEX0_BASE 0xFF200020
+#define HEX5_HEX4_BASE 0xFF200030
+#define SW_BASE 0xFF200040
+#define KEY_BASE 0xFF200050
+#define TIMER_BASE 0xFF202000
+#define PIXEL_BUF_CTRL_BASE 0xFF203020
+#define CHAR_BUF_CTRL_BASE 0xFF203030
 #define WHITE 0xFFFF
 #define YELLOW 0xFFE0
 #define RED 0xF800
@@ -134,21 +123,14 @@ struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 #define PINK 0xFC18
 #define ORANGE 0xFC00
 #define BLACK 0x0000
-	
 #define ABS(x) (((x) > 0) ? (x) : -(x))
-
-/* Screen size. */
 #define RESOLUTION_X 320
 #define RESOLUTION_Y 240
-
-/* Constants for animation */
 #define BOX_LEN 2
 #define NUM_BOXES 1
-
 #define FALSE 0
 #define TRUE 1
 int samples_n = 10000;
-
 #define GAMESTATE_INTRO 0
 #define GAMESTATE_CHARACTER 1
 #define GAMESTATE_INSTRUCTION 2
@@ -168,23 +150,17 @@ int samples_n = 10000;
 #define PLAYER_START_X 0
 #define PLAYER_END_X 60
 #define PLAYER_START_Y 150
-#define PLAYER_END_Y 231 //might change to 231
-
+#define PLAYER_END_Y 231 
 #define POWERBAR_START_X 52
 #define POWERBAR_START_y 160
-
 #define POWERBAR_END_X 62
 #define POWERBAR_END_y 230
 #define NOTDRAW 51168
 #define DELAY 100000 
-// Begin main.c 
 
- // global variable
+
 volatile int pixel_buffer_start;
 struct Game game;
-
-//backgrounds to use
-//const int testscreen[240][320] ={0};
 const int anglePointY[10] = {23,20,17,14,11,8,5,3,1,0};
 const int anglePointX[10] = {28,28,27,26,24,21,18,15,11,6};
 
