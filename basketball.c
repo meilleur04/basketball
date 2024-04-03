@@ -4225,41 +4225,44 @@ int main(void)
 			case GAMESTATE_INTRO:
 				//draws intro screen
 				callBackIntro();
-				audio_playback_mono(samples, samples_n);
+				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_CHARACTER:
-				audio_playback_mono(samples, samples_n);
+				//audio_playback_mono(samples, samples_n);
 				callBackCharacter();
 				
 				break;
 			
 			case GAMESTATE_INSTRUCTION:
 				callBackInstructions();
-				audio_playback_mono(samples, samples_n);
+				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_ANGLE:
 			
 				callBackAngle();
-				audio_playback_mono(samples, samples_n);
+				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_POWER:
 			
 				callBackPower();
-				audio_playback_mono(samples, samples_n);
+				while(1){
+					printf("h");
+				}
+				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_TIMING:
 			
 				callBackTiming();
-				audio_playback_mono(samples, samples_n);
+				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case GAMESTATE_VISUAL:
 				callbackVisual(game.powerBar.velocity,game.aimBar.angle);
-				audio_playback_mono(samples, samples_n);
+				//audio_playback_mono(samples, samples_n);
 				eraseVisual(1);
 				// redraw rim original color in case its green
 				if(game.net.score){
@@ -4508,26 +4511,13 @@ eraseAngleBackground();
 game.basketball.prevX = BALL_SPAWN_X;
 game.basketball.prevY = BALL_SPAWN_Y;
 erasePowerBar();
-eraseVisual(1);
-	
+eraseVisual(1); 
 }
 void callBackPower(){
-	
 	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
-	
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr -1 ;
-  	drawPowerBar();
-	//clear_screen(); // pixel_buffer_start points to the pixel buffer
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr); // we draw on the back buffer
+  	pixel_buffer_start = *pixel_ctrl_ptr;
 	drawPowerBar();
-  	//clear_screen();
-	
+  	
 	int count = 0;
 	int sliderDirection = -1;
 	int heightRatio; 
@@ -4544,6 +4534,7 @@ void callBackPower(){
 		if(count!=0){
 			eraseSlider();
 		}
+		
 		//stores prev values of slider
 		game.powerBar.prevXSlider = game.powerBar.xSlider;
 		game.powerBar.prevYSlider = game.powerBar.ySlider;
@@ -4576,12 +4567,7 @@ void callBackPower(){
 				/* always save the last three bytes received */
 			byte3 = PS2_data & 0xFF;
 		}			
-			if(byte3 == 0x1B){ //if pressed and released spacebar, switch game states
-				
-				
-					
-					//eraseSlider();
-					//drawSlider();						
+			if(byte3 == 0x1B){ //if pressed and released spacebar, switch game states				
 					game.gameState = GAMESTATE_TIMING;
 						//sets angle
 						
@@ -4594,57 +4580,29 @@ void callBackPower(){
 					
 					*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
 															// back buffer
-					/* now, swap the front/back buffers, to set the front buffer location */
-					//wait_for_vsync();
 						/* initialize a pointer to the pixel buffer, used by drawing functions */
 					pixel_buffer_start = *pixel_ctrl_ptr;
 					
 					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-POWERBAR_START_y)][(game.powerBar.xSlider+7) - (POWERBAR_START_X) -1]);
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
-					//eraseSlider();
-					//drawSlider();
-						/* set back pixel buffer to start of SDRAM memory */
-					*(pixel_ctrl_ptr + 1) = 0xC0000000;
-					pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-					
-					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-POWERBAR_START_y)][(game.powerBar.xSlider+7) - (POWERBAR_START_X) -1]);
-					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );					
-					//eraseSlider();
-					//drawSlider();
 					
 					game.powerBar.ySlider = POWERBAR_END_y -1;	
 						
 					while(1){
-						
 						PS2_data = *(PS2_ptr);
 						RAVAIL = PS2_data & 0xFFFF0000;
 						
 						if(RAVAIL == 0){
 							PS2_data = *(PS2_ptr);
 							return;
-							
 						}
-						
-						
 					}	
-					
 					return;						
-						
-				
-				
 			}			
 			f--;
-			
 		}
-
-		count = 1;
-		//wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		//pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer			
-		
+		count = 1;			
 	}
-	
-	
-	
 }
 
 
