@@ -109,7 +109,6 @@ double ABS(double x) {
 	}
 }
 
-
 volatile int pixel_buffer_start;
 struct Game game;
 const int anglePointY[10] = {23,20,17,14,11,8,5,3,1,0};
