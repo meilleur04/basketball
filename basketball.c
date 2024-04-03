@@ -23,7 +23,6 @@ void erasePowerBar();
 void eraseSlider();
 void callBackTiming();
 void plot_pixel(int x, int y, short int line_color);
-void callBackDifficulty();
 void eraseBasketballNet();
 void displayLives();
 void displayScore();
@@ -4253,73 +4252,7 @@ int main(void)
 
 			case 8:
 			
-				callBackDifficulty();
-				displayScore();
-				
-				displayLives();
-				break;
-			
-			case -1:
-			
-				break;
-				
-		}
-		
-
-	}
-	
-}
-
-void displayHighScore(){
-	
-	if(game.currentScore> game.highScore){
-		
-		game.highScore = game.currentScore;
-		
-	}
-	int tens = game.highScore/10;
-	int ones = game.highScore%10;
-	
-	int displayHighScore = (hexdisplay[tens] << 8) | hexdisplay[ones];
-	
-	*(HEX4_5) = displayHighScore;
-	
-	
-}
-
-void displayScore(){
-	
-	int tens = game.currentScore/10;
-	int ones = game.currentScore%10;
-	
-	int displayNum = (hexdisplay[tens] << 8 ) | hexdisplay[ones];
-	*(HEX3_0) = displayNum;
-	
-	
-	
-}
-
-void displayLives(){
-	
-	if(game.lives == 3){
-		*RLEDs = 7;
-	}
-	if(game.lives == 2){
-		*RLEDs = 3;
-	}
-	if(game.lives == 1){
-		
-		*RLEDs = 1;
-	}
-	if(game.lives<=0){
-		
-		*RLEDs = 0;
-	}
-	
-}
-//need to change net coordinates 
-void callBackDifficulty() {
-    // If scored
+				// If scored
     if (game.net.score) {
         srand(time(0));
         int newX;
@@ -4425,8 +4358,69 @@ void callBackDifficulty() {
             game.lives = 3;
         }
     }
+				displayScore();
+				
+				displayLives();
+				break;
+			
+			case -1:
+			
+				break;
+				
+		}
+		
+
+	}
+	
 }
 
+void displayHighScore(){
+	
+	if(game.currentScore> game.highScore){
+		
+		game.highScore = game.currentScore;
+		
+	}
+	int tens = game.highScore/10;
+	int ones = game.highScore%10;
+	
+	int displayHighScore = (hexdisplay[tens] << 8) | hexdisplay[ones];
+	
+	*(HEX4_5) = displayHighScore;
+	
+	
+}
+
+void displayScore(){
+	
+	int tens = game.currentScore/10;
+	int ones = game.currentScore%10;
+	
+	int displayNum = (hexdisplay[tens] << 8 ) | hexdisplay[ones];
+	*(HEX3_0) = displayNum;
+	
+	
+	
+}
+
+void displayLives(){
+	
+	if(game.lives == 3){
+		*RLEDs = 7;
+	}
+	if(game.lives == 2){
+		*RLEDs = 3;
+	}
+	if(game.lives == 1){
+		
+		*RLEDs = 1;
+	}
+	if(game.lives<=0){
+		
+		*RLEDs = 0;
+	}
+	
+}
 
 void callBackTiming(){
 	
