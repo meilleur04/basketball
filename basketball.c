@@ -14,7 +14,6 @@ void disable_A9_interrupts();
 void config_PS2();
 void keyboard_ISR();
 void config_interrupt(int N, int CPU_target);
-void init_game();
 void eraseVisual(int count);
 void updateVisual();
 bool drawVisual();
@@ -4187,21 +4186,67 @@ volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 
 int main(void)
 {	
-	init_game();
-	//set_A9_IRQ_stack();
+	game.gameState = GAMESTATE_INTRO;
 	
-	//config_GIC();
+	game.currentScore = 0;
+	//player has 3 lives
+	game.lives = 3;
+	game.highScore = 0;
 	
-	//config_PS2();
+	game.basketball.x=BALL_SPAWN_X;game.basketball.y= BALL_SPAWN_Y; game.basketball.dy =0;game.basketball.dx=0; game.basketball.prevX=0; game.basketball.prevY=0;
+	game.basketball.startX = BALL_SPAWN_X; game.basketball.startY=BALL_SPAWN_Y;
 	
-	//enable_A9_interrupts();
+	game.net.x= 275 - NET_OFFSET_X;game.net.y= 70 - NET_OFFSET_Y;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
+	game.net.rightRimX = game.net.x +NET_OFFSET_X + NET_DIAMETER/2 +1; game.net.leftRimX = game.net.x +NET_OFFSET_X - NET_DIAMETER/2;
+
 	
-    
-    // declare other variables(not shown)
-    // initialize location and direction of rectangles(not shown)
+	game.player.x=0; game.player.y=0;game.player.prevX=0;game.player.prevY=0;game.player.playerID=0;
 	
-   	
-	/* set front pixel buffer to start of FPGA On-chip memory */
+	game.powerBar.xSlider=POWERBAR_START_X+1; game.powerBar.ySlider=POWERBAR_END_y-1; game.powerBar.prevXSlider=0; game.powerBar.prevYSlider=0; game.powerBar.width=10; 
+	game.powerBar.height=70;game.powerBar.xFixed=0;game.powerBar.yFixed=0;
+	
+	for(int y=0;y<70;y++){
+		for(int x=0; x<10;x++){
+			
+			game.powerBar.powerBarArray[y][x] = powerBar[y][x];
+			
+		}
+		
+	}
+	
+	int power = 14;
+	//initializes power from 14-22
+	for(int i =0 ; i<9;i++){
+		
+		game.powerBar.power[i] = power;
+		
+		power++;
+	}
+
+	//ending point for draw lines
+	game.aimBar.xEnd=0;game.aimBar.yEnd=0;game.aimBar.prevXEnd=0; game.aimBar.prevYEnd=0; 
+	//starting point for draw line
+	game.aimBar.xFixed=1; game.aimBar.yFixed=28;
+	
+	game.aimBar.rightX=23;game.aimBar.rightY=28; game.aimBar.topX=0; game.aimBar.topY=6;game.aimBar.angle=0.0;
+	
+	int angle = 35;
+	for(int i =0;i<10;i++){
+		
+		game.aimBar.pointX[i] = anglePointX[i];
+		game.aimBar.pointY[i] = anglePointY[i];
+		//sets angle to 35-80;
+		game.aimBar.angleArray[i] = angle;
+		angle+=5;
+	}
+	
+	for (int y=0 ; y < RESOLUTION_Y; y++)
+	{
+		for (int x=0 ; x < RESOLUTION_X; x++)
+		{
+			game.background[y][x] = introScreen[y][x];
+		}
+	}
 	
   *(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
 
@@ -5248,70 +5293,6 @@ void eraseVisual(int count){
 		}
 	}
 }		
-
-void init_game(){
-	game.gameState = GAMESTATE_INTRO;
-	
-	game.currentScore = 0;
-	//player has 3 lives
-	game.lives = 3;
-	game.highScore = 0;
-	
-	game.basketball.x=BALL_SPAWN_X;game.basketball.y= BALL_SPAWN_Y; game.basketball.dy =0;game.basketball.dx=0; game.basketball.prevX=0; game.basketball.prevY=0;
-	game.basketball.startX = BALL_SPAWN_X; game.basketball.startY=BALL_SPAWN_Y;
-	
-	game.net.x= 275 - NET_OFFSET_X;game.net.y= 70 - NET_OFFSET_Y;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
-	game.net.rightRimX = game.net.x +NET_OFFSET_X + NET_DIAMETER/2 +1; game.net.leftRimX = game.net.x +NET_OFFSET_X - NET_DIAMETER/2;
-
-	
-	game.player.x=0; game.player.y=0;game.player.prevX=0;game.player.prevY=0;game.player.playerID=0;
-	
-	game.powerBar.xSlider=POWERBAR_START_X+1; game.powerBar.ySlider=POWERBAR_END_y-1; game.powerBar.prevXSlider=0; game.powerBar.prevYSlider=0; game.powerBar.width=10; 
-	game.powerBar.height=70;game.powerBar.xFixed=0;game.powerBar.yFixed=0;
-	
-	for(int y=0;y<70;y++){
-		for(int x=0; x<10;x++){
-			
-			game.powerBar.powerBarArray[y][x] = powerBar[y][x];
-			
-		}
-		
-	}
-	
-	int power = 14;
-	//initializes power from 14-22
-	for(int i =0 ; i<9;i++){
-		
-		game.powerBar.power[i] = power;
-		
-		power++;
-	}
-
-	//ending point for draw lines
-	game.aimBar.xEnd=0;game.aimBar.yEnd=0;game.aimBar.prevXEnd=0; game.aimBar.prevYEnd=0; 
-	//starting point for draw line
-	game.aimBar.xFixed=1; game.aimBar.yFixed=28;
-	
-	game.aimBar.rightX=23;game.aimBar.rightY=28; game.aimBar.topX=0; game.aimBar.topY=6;game.aimBar.angle=0.0;
-	
-	int angle = 35;
-	for(int i =0;i<10;i++){
-		
-		game.aimBar.pointX[i] = anglePointX[i];
-		game.aimBar.pointY[i] = anglePointY[i];
-		//sets angle to 35-80;
-		game.aimBar.angleArray[i] = angle;
-		angle+=5;
-	}
-	
-	for (int y=0 ; y < RESOLUTION_Y; y++)
-	{
-		for (int x=0 ; x < RESOLUTION_X; x++)
-		{
-			game.background[y][x] = introScreen[y][x];
-		}
-	}
-}
 
 void plot_pixel(int x, int y, short int line_color)
 {
