@@ -4105,7 +4105,6 @@ const int powerBar[70][10] = {
 
 const int hexdisplay[10] = {0x3f,0x06,0x5b,0x4f,0x66,0x6d, 0x7d, 0x07, 0x7f, 0x67};
 
-
 volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 #define RLEDs ((volatile long *) 0xFF200000)
 #define HEX3_0 ((volatile long *) 0xFF200020)
@@ -4125,7 +4124,6 @@ int main(void)
 	
 	game.net.x= 275 - 39;game.net.y= 70 - 31;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
 	game.net.rightRimX = game.net.x +39 + 31/2 +1; game.net.leftRimX = game.net.x +39 - 31/2;
-
 	
 	game.player.x=0; game.player.y=0;game.player.prevX=0;game.player.prevY=0;game.player.playerID=0;
 	
@@ -4134,19 +4132,14 @@ int main(void)
 	
 	for(int y=0;y<70;y++){
 		for(int x=0; x<10;x++){
-			
-			game.powerBar.powerBarArray[y][x] = powerBar[y][x];
-			
+			game.powerBar.powerBarArray[y][x] = powerBar[y][x];	
 		}
-		
 	}
 	
 	int power = 14;
 	//initializes power from 14-22
 	for(int i =0 ; i<9;i++){
-		
 		game.powerBar.power[i] = power;
-		
 		power++;
 	}
 
@@ -4159,7 +4152,6 @@ int main(void)
 	
 	int angle = 35;
 	for(int i =0;i<10;i++){
-		
 		game.aimBar.pointX[i] = anglePointX[i];
 		game.aimBar.pointY[i] = anglePointY[i];
 		//sets angle to 35-80;
@@ -4188,10 +4180,7 @@ int main(void)
 	displayScore();
 	displayHighScore();
 	while(1){
-		
 		int x = game.gameState;
-		
-		
 		switch(x){
 			//inital screen of game
 			case 0:
@@ -4290,12 +4279,9 @@ void displayScore(){
 void displayLives(){
 	
 	if(game.lives == 3){
-		
 		*RLEDs = 7;
-		
 	}
 	if(game.lives == 2){
-		
 		*RLEDs = 3;
 	}
 	if(game.lives == 1){
