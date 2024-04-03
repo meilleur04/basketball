@@ -102,31 +102,16 @@ struct audio_t {
 struct audio_t *const audiop = ((struct audio_t *)0xff203040);
 
 #define ABS(x) (((x) > 0) ? (x) : -(x))
-#define GAMESTATE_INTRO 0
-#define GAMESTATE_CHARACTER 1
-#define GAMESTATE_INSTRUCTION 2
-#define GAMESTATE_ANGLE 3
-#define GAMESTATE_POWER 4
-#define GAMESTATE_TIMING 5
-#define GAMESTATE_VISUAL 6
-#define GAMESTATE_SCORE 7
-#define GAMESTATE_DIFFICULTY 8
-#define BALL_SPAWN_X 37
-#define BALL_SPAWN_Y 138
 #define BALL_DIAMETER 15
 #define NET_OFFSET_X 39
 #define NET_OFFSET_Y 31
-#define NET_DIAMETER 31
 #define PLAYER_START_X 0
 #define PLAYER_END_X 60
 #define PLAYER_START_Y 150
 #define PLAYER_END_Y 231 
 #define POWERBAR_START_X 52
 #define POWERBAR_START_y 160
-#define POWERBAR_END_X 62
 #define POWERBAR_END_y 230
-#define NOTDRAW 51168
-#define DELAY 100000 
 
 
 volatile int pixel_buffer_start;
@@ -4133,18 +4118,18 @@ volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 
 int main(void)
 {	
-	game.gameState = GAMESTATE_INTRO;
+	game.gameState = 0;
 	
 	game.currentScore = 0;
 	//player has 3 lives
 	game.lives = 3;
 	game.highScore = 0;
 	
-	game.basketball.x=BALL_SPAWN_X;game.basketball.y= BALL_SPAWN_Y; game.basketball.dy =0;game.basketball.dx=0; game.basketball.prevX=0; game.basketball.prevY=0;
-	game.basketball.startX = BALL_SPAWN_X; game.basketball.startY=BALL_SPAWN_Y;
+	game.basketball.x=37;game.basketball.y= 138; game.basketball.dy =0;game.basketball.dx=0; game.basketball.prevX=0; game.basketball.prevY=0;
+	game.basketball.startX = 37; game.basketball.startY=138;
 	
 	game.net.x= 275 - NET_OFFSET_X;game.net.y= 70 - NET_OFFSET_Y;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
-	game.net.rightRimX = game.net.x +NET_OFFSET_X + NET_DIAMETER/2 +1; game.net.leftRimX = game.net.x +NET_OFFSET_X - NET_DIAMETER/2;
+	game.net.rightRimX = game.net.x +NET_OFFSET_X + 31/2 +1; game.net.leftRimX = game.net.x +NET_OFFSET_X - 31/2;
 
 	
 	game.player.x=0; game.player.y=0;game.player.prevX=0;game.player.prevY=0;game.player.playerID=0;
@@ -4214,42 +4199,42 @@ int main(void)
 		
 		switch(x){
 			//inital screen of game
-			case GAMESTATE_INTRO:
+			case 0:
 				//draws intro screen
 				callBackIntro();
 				//audio_playback_mono(samples, samples_n);
 				break;
 			
-			case GAMESTATE_CHARACTER:
+			case 1:
 				//audio_playback_mono(samples, samples_n);
 				callBackCharacter();
 				
 				break;
 			
-			case GAMESTATE_INSTRUCTION:
+			case 2:
 				callBackInstructions();
 				//audio_playback_mono(samples, samples_n);
 				break;
 			
-			case GAMESTATE_ANGLE:
+			case 3:
 			
 				callBackAngle();
 				//audio_playback_mono(samples, samples_n);
 				break;
 			
-			case GAMESTATE_POWER:
+			case 4:
 			
 				callBackPower();
 				//audio_playback_mono(samples, samples_n);
 				break;
 			
-			case GAMESTATE_TIMING:
+			case 5:
 			
 				callBackTiming();
 				//audio_playback_mono(samples, samples_n);
 				break;
 			
-			case GAMESTATE_VISUAL:
+			case 6:
 				callbackVisual(game.powerBar.velocity,game.aimBar.angle);
 				//audio_playback_mono(samples, samples_n);
 				eraseVisual(1);
@@ -4259,7 +4244,7 @@ int main(void)
 				}
 				break;
 
-			case GAMESTATE_DIFFICULTY:
+			case 8:
 			
 				callBackDifficulty();
 				displayScore();
@@ -4374,19 +4359,19 @@ void callBackDifficulty() {
         game.net.prevX = newX;
         game.net.prevY = newY;
 
-        game.gameState = GAMESTATE_ANGLE;
+        game.gameState = 3;
         game.net.score = false;
 
-        game.net.rightRimX = game.net.x + NET_OFFSET_X + NET_DIAMETER / 2 + 1;
-        game.net.leftRimX = game.net.x + NET_OFFSET_X - NET_DIAMETER / 2;
+        game.net.rightRimX = game.net.x + NET_OFFSET_X + 31 / 2 + 1;
+        game.net.leftRimX = game.net.x + NET_OFFSET_X - 31 / 2;
     } else {
         game.lives--;
         // Reset game if lives = 0
-        game.gameState = GAMESTATE_ANGLE;
+        game.gameState = 3;
 
         if (game.lives <= 0) {
             displayHighScore();
-            game.gameState = GAMESTATE_ANGLE;
+            game.gameState = 3;
             game.currentScore = 0;
 
             int newX;
@@ -4429,10 +4414,10 @@ void callBackDifficulty() {
             game.net.prevX = newX;
             game.net.prevY = newY;
 
-            game.gameState = GAMESTATE_ANGLE;
+            game.gameState = 3;
             game.net.score = false;
-            game.net.rightRimX = game.net.x + NET_OFFSET_X + NET_DIAMETER / 2 + 1;
-            game.net.leftRimX = game.net.x + NET_OFFSET_X - NET_DIAMETER / 2;
+            game.net.rightRimX = game.net.x + NET_OFFSET_X + 31 / 2 + 1;
+            game.net.leftRimX = game.net.x + NET_OFFSET_X - 31 / 2;
             game.lives = 3;
         }
     }
@@ -4469,7 +4454,7 @@ void callBackTiming(){
 				
 				if(byte1==0x29){
 					
-					game.gameState = GAMESTATE_VISUAL;
+					game.gameState = 6;
 					break;
 				}	
 			}
@@ -4480,8 +4465,8 @@ void callBackTiming(){
 
 // Erase elements from the front buffer
 eraseAngleBackground();
-game.basketball.prevX = BALL_SPAWN_X;
-game.basketball.prevY = BALL_SPAWN_Y;
+game.basketball.prevX = 37;
+game.basketball.prevY = 138;
 erasePowerBar();
 eraseVisual(1); 
 }
@@ -4540,7 +4525,7 @@ void callBackPower(){
 			byte3 = PS2_data & 0xFF;
 		}			
 			if(byte3 == 0x1B){ //if pressed and released spacebar, switch game states				
-					game.gameState = GAMESTATE_TIMING;
+					game.gameState = 5;
 						//sets angle
 						
 					double heightRatio = (double)((POWERBAR_END_y -1) - game.powerBar.ySlider)/(double)game.powerBar.height;
@@ -4595,7 +4580,7 @@ void drawPowerBar(){
 	
 	for(int y = POWERBAR_START_y;y<POWERBAR_END_y;y++){
 		
-		for(int x= POWERBAR_START_X; x< POWERBAR_END_X; x++){
+		for(int x= POWERBAR_START_X; x< 62; x++){
 			
 				
 				plot_pixel(x,y,game.powerBar.powerBarArray[y-POWERBAR_START_y][x-POWERBAR_START_X]);
@@ -4609,7 +4594,7 @@ void erasePowerBar(){
 	
 	for(int y = POWERBAR_START_y;y<POWERBAR_END_y;y++){
 		
-		for(int x= POWERBAR_START_X; x< POWERBAR_END_X; x++){
+		for(int x= POWERBAR_START_X; x< 62; x++){
 			
 				
 				plot_pixel(x,y,game.background[y][x]);
@@ -4661,13 +4646,13 @@ void callBackAngle(){
 	int angleCounter = 0;
 	int angleDirection = 1;
 	int prevAngle = 0;
-	game.aimBar.xEnd = BALL_SPAWN_X +15  + game.aimBar.pointX[angleCounter];
-	game.aimBar.yEnd = BALL_SPAWN_Y - 30 + game.aimBar.pointY[angleCounter];	
+	game.aimBar.xEnd = 37 +15  + game.aimBar.pointX[angleCounter];
+	game.aimBar.yEnd = 138 - 30 + game.aimBar.pointY[angleCounter];	
 
 	while (1) {
 		if(count!=0){
 			
-			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 0xffff);
+			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
 			
 		}
 		prevAngle = angleCounter;
@@ -4685,13 +4670,13 @@ void callBackAngle(){
 			angleCounter = 0;
 			
 		}
-		game.aimBar.xEnd = game.aimBar.pointX[angleCounter] + BALL_SPAWN_X +15 ;
-		game.aimBar.yEnd = game.aimBar.pointY[angleCounter] + BALL_SPAWN_Y - 30;
+		game.aimBar.xEnd = game.aimBar.pointX[angleCounter] + 37 +15 ;
+		game.aimBar.yEnd = game.aimBar.pointY[angleCounter] + 138 - 30;
 		
 		count = 1;
 		
 		//draws blue line 
-		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 6447);
+		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
 		int f= 50000;
 		while(f!=0){
 			
@@ -4704,7 +4689,7 @@ void callBackAngle(){
 			}
 			
 			if(byte3 == 0x1C){ //if pressed and released spacebar, switch game states						
-				game.gameState = GAMESTATE_POWER;
+				game.gameState = 4;
 				//sets angle
 				//going up
 				if(prevAngle == 10){
@@ -4731,15 +4716,15 @@ void callBackAngle(){
 				pixel_buffer_start = *pixel_ctrl_ptr;
 				//clear_screen(); // pixel_buffer_start points to the pixel buffer
 				
-				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
-				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
+				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 0xffff);
+				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 6447);
 				
 				/* set back pixel buffer to start of SDRAM memory */
 				*(pixel_ctrl_ptr + 1) = 0xC0000000;
 				pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
 				//clear_screen();
-				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + BALL_SPAWN_X +15, game.aimBar.yFixed  + (BALL_SPAWN_Y - 30) , 0xffff);
-				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (BALL_SPAWN_X +15) , game.aimBar.yFixed + (BALL_SPAWN_Y - 30), 6447);
+				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 0xffff);
+				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 6447);
 				
 				while(1){
 					PS2_data = *(PS2_ptr);
@@ -4762,13 +4747,13 @@ void callBackAngle(){
 
 void drawAngleBackground(){
 	
-	for(int y=BALL_SPAWN_Y - 30; y<BALL_SPAWN_Y; y++ ){
+	for(int y=138 - 30; y<138; y++ ){
 		
-		for(int x=BALL_SPAWN_X +15; x<BALL_SPAWN_X +45; x++){
+		for(int x=37 +15; x<37 +45; x++){
 			
-			if(angle[y - (BALL_SPAWN_Y - 30)][x - (BALL_SPAWN_X +15)] != NOTDRAW){
+			if(angle[y - (138 - 30)][x - (37 +15)] != 51168){
 				
-				plot_pixel(x,y,angle[y - (BALL_SPAWN_Y - 30) ][x - (BALL_SPAWN_X +15)]);
+				plot_pixel(x,y,angle[y - (138 - 30) ][x - (37 +15)]);
 				
 			}
 			
@@ -4781,9 +4766,9 @@ void drawAngleBackground(){
 }
 
 void eraseAngleBackground(){
-	for(int y=BALL_SPAWN_Y - 30; y<BALL_SPAWN_Y; y++ ){
-		for(int x=BALL_SPAWN_X +15; x<BALL_SPAWN_X +45; x++){
-			if(angle[y - (BALL_SPAWN_Y - 30)][x - (BALL_SPAWN_X +15)] != NOTDRAW){
+	for(int y=138 - 30; y<138; y++ ){
+		for(int x=37 +15; x<37 +45; x++){
+			if(angle[y - (138 - 30)][x - (37 +15)] != 51168){
 				plot_pixel(x,y,game.background[y][x]);	
 			}	
 		}
@@ -4854,7 +4839,7 @@ void callBackInstructions(){
 			if(byte2 == 0xf0){	
 				if(byte1==0x29){
 					
-					game.gameState = GAMESTATE_ANGLE;
+					game.gameState = 3;
 					break;
 				}	
 			}	
@@ -4915,7 +4900,7 @@ void callBackCharacter(){
 							game.player.playerID = 1;	
 						}	
 					}		
-					game.gameState = GAMESTATE_INSTRUCTION;
+					game.gameState = 2;
 					return;
 					
 				}	
@@ -4934,7 +4919,7 @@ void callBackCharacter(){
 							game.player.playerID = 2;								
 						}	
 					}
-					game.gameState = GAMESTATE_INSTRUCTION;
+					game.gameState = 2;
 					return;		
 				}	
 			}	
@@ -4952,7 +4937,7 @@ void callBackCharacter(){
 							game.player.playerID = 3;									
 						}	
 					}		
-					game.gameState = GAMESTATE_INSTRUCTION;
+					game.gameState = 2;
 					return;
 					
 				}	
@@ -4971,7 +4956,7 @@ void callBackCharacter(){
 							game.player.playerID = 4;				
 						}	
 					}		
-					game.gameState = GAMESTATE_INSTRUCTION;
+					game.gameState = 2;
 					return;
 					
 				}	
@@ -5017,7 +5002,7 @@ void callBackIntro(){
 		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
 			if(byte2 == 0xf0){	
 				if(byte1==0x29){	
-					game.gameState = GAMESTATE_CHARACTER;
+					game.gameState = 1;
 					break;
 				}	
 			}
@@ -5053,7 +5038,7 @@ void callbackScore(){
 			m = dy/dx;
 			double intersectX = (game.net.y+NET_OFFSET_Y - (game.basketball.prevY+BALL_DIAMETER/2)+ m*game.basketball.prevX+BALL_DIAMETER/2)/m;
 
-				if (intersectX<= game.net.x+NET_OFFSET_X+NET_DIAMETER/2.0  && intersectX>= game.net.x+NET_OFFSET_X-NET_DIAMETER/2.0 ){
+				if (intersectX<= game.net.x+NET_OFFSET_X+31/2.0  && intersectX>= game.net.x+NET_OFFSET_X-31/2.0 ){
 					game.basketball.dy = 1;
 					
 					if(game.basketball.dx < 0){
@@ -5089,7 +5074,7 @@ void callbackVisual(double velocityInitial, double theta){
 		eraseVisual(count);
 		//update directions
 		updateVisual();
-		int f = DELAY;
+		int f = 100000;
 		f=0;
 		while(f !=0){
 			f--;
@@ -5116,7 +5101,7 @@ bool drawVisual(){
 	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +BALL_DIAMETER>=240 ){
 		game.basketball.y = game.basketball.startY;
 		game.basketball.x = game.basketball.startX;
-		game.gameState=GAMESTATE_DIFFICULTY;
+		game.gameState=8;
 		if(game.net.score){
 			draw_line(game.net.leftRimX, game.net.y+NET_OFFSET_Y, game.net.rightRimX+1, game.net.y+NET_OFFSET_Y,64704);
 		}
