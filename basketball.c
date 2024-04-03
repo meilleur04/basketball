@@ -4,10 +4,8 @@
 #include <time.h>
 #include <math.h>
 void eraseVisual(int count);
-void updateVisual();
 bool drawVisual();
 void callbackVisual(double velocityInitial, double theta);
-void callBackIntro();
 void drawBackground();
 void draw_line(int x0, int y0,int x1, int y1, short int line_color);
 void callBackCharacter();
@@ -4172,9 +4170,46 @@ int main(void)
 		switch(x){
 			//inital screen of game
 			case 0:
-				//draws intro screen
-				callBackIntro();
-				//audio_playback_mono(samples, samples_n);
+				*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
+                                        // back buffer
+    /* now, swap the front/back buffers, to set the front buffer location */
+  	wait_for_vsync();
+    /* initialize a pointer to the pixel buffer, used by drawing functions */
+  	pixel_buffer_start = *pixel_ctrl_ptr;
+  	//clear_screen(); // pixel_buffer_start points to the pixel buffer
+	drawBackground();
+    /* set back pixel buffer to start of SDRAM memory */
+  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
+  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
+  	//clear_screen();
+	drawBackground();
+	unsigned char byte1 = 0;
+	unsigned char byte2 = 0;
+	unsigned char byte3 = 0;
+  	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
+	int PS2_data, RVALID;
+	
+	//polling loop for spacebar 
+	while (1) {
+		
+		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
+		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
+		if (RVALID != 0)
+		{
+			/* always save the last three bytes received */
+			byte1 = byte2;
+			byte2 = byte3;
+			byte3 = PS2_data & 0xFF;
+		}
+		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
+			if(byte2 == 0xf0){	
+				if(byte1==0x29){	
+					game.gameState = 1;
+					break;
+				}	
+			}
+		}
+	}		
 				break;
 			
 			case 1:
@@ -4934,51 +4969,6 @@ void callBackCharacter(){
 	}		
 }
 
-
-//draws intro screen and polls for spacebar to move onto next gamestate
-void callBackIntro(){
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr;
-  	//clear_screen(); // pixel_buffer_start points to the pixel buffer
-	drawBackground();
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-  	//clear_screen();
-	drawBackground();
-	unsigned char byte1 = 0;
-	unsigned char byte2 = 0;
-	unsigned char byte3 = 0;
-  	volatile int * PS2_ptr = (int *) 0xFF200100;  // PS/2 port address
-	int PS2_data, RVALID;
-	
-	//polling loop for spacebar 
-	while (1) {
-		
-		PS2_data = *(PS2_ptr);	// read the Data register in the PS/2 port
-		RVALID = (PS2_data & 0x8000);	// extract the RVALID field
-		if (RVALID != 0)
-		{
-			/* always save the last three bytes received */
-			byte1 = byte2;
-			byte2 = byte3;
-			byte3 = PS2_data & 0xFF;
-		}
-		if(byte3 == 0x29){ //if pressed and released spacebar, switch game states
-			if(byte2 == 0xf0){	
-				if(byte1==0x29){	
-					game.gameState = 1;
-					break;
-				}	
-			}
-		}
-	}		
-}
-
 void drawBackground(){
 	for(int y=0;y<240;y++){
 		for(int x=0;x<320;x++){
@@ -5042,64 +5032,7 @@ void callbackVisual(double velocityInitial, double theta){
     {	
 		eraseVisual(count);
 		//update directions
-		updateVisual();
-		int f = 100000;
-		f=0;
-		while(f !=0){
-			f--;
-		}
-		if(!game.net.score){
-			callbackScore();
-		}
-		//update positions
-		if(!drawVisual()){
-			exit_drawvisual=true;
-		}
-		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer	
-		
-		if(exit_drawvisual){
-			break;
-		}
-		count++;
-	}
-	
-}
-
-bool drawVisual(){
-	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +15>=240 ){
-		game.basketball.y = game.basketball.startY;
-		game.basketball.x = game.basketball.startX;
-		game.gameState=8;
-		if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31,64704);
-		}
-		return 0;
-	}
-	// code for drawing the boxes and lines (not shown)
-	for(int y=game.basketball.y;y<game.basketball.y+15;y++){
-
-		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
-
-			if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
-				if(x>=0 && x<=320 && y >= 0 && y<=240){
-					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
-				}
-			}
-		}
-
-	}
-	if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 0x07E0);
-		}
-	// code for updating the locations of boxes (not shown)
-	
-	return 1;
-}
-
-void updateVisual(){
-	
-	game.basketball.prevX= game.basketball.x;
+		game.basketball.prevX= game.basketball.x;
 	game.basketball.prevY=game.basketball.y;
 	
 	bool collisionX= false;
@@ -5164,6 +5097,58 @@ void updateVisual(){
 	if(!collisionY){
 		game.basketball.y+=game.basketball.dy;
 	}
+		int f = 100000;
+		f=0;
+		while(f !=0){
+			f--;
+		}
+		if(!game.net.score){
+			callbackScore();
+		}
+		//update positions
+		if(!drawVisual()){
+			exit_drawvisual=true;
+		}
+		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
+		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer	
+		
+		if(exit_drawvisual){
+			break;
+		}
+		count++;
+	}
+	
+}
+
+bool drawVisual(){
+	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +15>=240 ){
+		game.basketball.y = game.basketball.startY;
+		game.basketball.x = game.basketball.startX;
+		game.gameState=8;
+		if(game.net.score){
+			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31,64704);
+		}
+		return 0;
+	}
+	// code for drawing the boxes and lines (not shown)
+	for(int y=game.basketball.y;y<game.basketball.y+15;y++){
+
+		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
+
+			if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
+				if(x>=0 && x<=320 && y >= 0 && y<=240){
+					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
+				}
+			}
+		}
+
+	}
+	if(game.net.score){
+			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 0x07E0);
+		}
+	// code for updating the locations of boxes (not shown)
+	
+	return 1;
 }
 
 void eraseVisual(int count){
