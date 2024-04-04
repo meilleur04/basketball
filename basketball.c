@@ -5022,9 +5022,11 @@ void callbackVisual(double velocityInitial, double theta){
 		eraseVisual(count);
 		for(int y=game.basketball.y;y<game.basketball.y+15;y++){
 		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
+			// if x^2 + y^2 > basketball radius^2, then it is not in the circle
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
+					if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
 					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
-				}
+					}}
 		}
 	}
 	for(long long int i = 0; i <100000;i++){
@@ -5159,6 +5161,9 @@ void eraseVisual(int count){
 
 void plot_pixel(int x, int y, short int line_color)
 {
+	if(line_color == 51168){
+		return;
+	}
     *(short int *)(pixel_buffer_start + (y << 10) + (x << 1)) = line_color;
 }
 
