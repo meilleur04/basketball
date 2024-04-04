@@ -5020,6 +5020,16 @@ void callbackVisual(double velocityInitial, double theta){
 	while (1)
     {	
 		eraseVisual(count);
+		for(int y=game.basketball.y;y<game.basketball.y+15;y++){
+		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
+				if(x>=0 && x<=320 && y >= 0 && y<=240){
+					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
+				}
+		}
+	}
+	for(long long int i = 0; i <100000;i++){
+		i++;
+	}
 		//update directions
 		game.basketball.prevX= game.basketball.x;
 	game.basketball.prevY=game.basketball.y;
@@ -5063,7 +5073,6 @@ void callbackVisual(double velocityInitial, double theta){
 			game.basketball.x = game.net.rightRimX+ 1;
 			game.basketball.dx= abs(game.basketball.dx/2);
 		}
-		
 	}
 	
 	if (game.basketball.x >= 320-15)
@@ -5072,7 +5081,6 @@ void callbackVisual(double velocityInitial, double theta){
 		game.basketball.dx= abs(game.basketball.dx/2);
 	if(game.basketball.y >= 240-15){
 		game.basketball.dy = -1*abs(game.basketball.dy/2);
-		
 		game.basketball.dx = 0;
 	}
 	if(game.basketball.y +15<240){
@@ -5086,25 +5094,17 @@ void callbackVisual(double velocityInitial, double theta){
 	if(!collisionY){
 		game.basketball.y+=game.basketball.dy;
 	}
-		int f = 100000;
-		f=0;
-		while(f !=0){
-			f--;
-		}
-		if(!game.net.score){
-			callbackScore();
-		}
-		//update positions
-		if(!drawVisual()){
-			exit_drawvisual=true;
-		}
-		wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-		pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer	
-		
-		if(exit_drawvisual){
-			break;
-		}
-		count++;
+	if(!game.net.score){
+		callbackScore();
+	}
+	//update positions
+	if(!drawVisual()){
+		exit_drawvisual=true;
+	}	
+	if(exit_drawvisual){
+		break;
+	}
+	count++;
 	}
 	
 }
@@ -5121,16 +5121,11 @@ bool drawVisual(){
 	}
 	// code for drawing the boxes and lines (not shown)
 	for(int y=game.basketball.y;y<game.basketball.y+15;y++){
-
 		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
-
-			if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
 					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
 				}
-			}
 		}
-
 	}
 	if(game.net.score){
 			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 0x07E0);
