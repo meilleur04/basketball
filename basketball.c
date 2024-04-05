@@ -2227,20 +2227,7 @@ void callBackInstructions(){
 			game.background[y][x] = instructionScreen[y][x];
 		}
 	}
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-
-    
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr;
-  	//clear_screen(); // pixel_buffer_start points to the pixel buffer
-	drawBackground();
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-  	//clear_screen();
+	
 	drawBackground();
 	
 	unsigned char byte1 = 0;
@@ -2282,19 +2269,6 @@ void callBackCharacter(){
 			game.background[y][x] = charSelectionScreen[y][x];	
 		}	
 	}
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr;
-  	
-	drawBackground();
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr + 1) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-  	
-	//draws character selection screen
 	drawBackground();
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
@@ -2356,12 +2330,12 @@ void callBackCharacter(){
 				if(byte1==0x26){
 					for(int y=0; y<81; y++){
 						for(int x=0; x<69; x++){
-							game.player.playerModel[y][x] = kawhiLeonardShootingModel[y][x];
+							game.player.playerModel[y][x] = kobeShootingModel[y][x];
 							game.player.x = 0;
 							game.player.prevX = 60;
 							game.player.y = 150;
 							game.player.y = 231;
-							game.player.playerID = 3;									
+							game.player.playerID = 4;								
 						}	
 					}		
 					game.gameState = 2;
@@ -2369,26 +2343,7 @@ void callBackCharacter(){
 					
 				}	
 			}	
-		}
-		if(byte3 == 0x25){ //if pressed and released 4, change model to kobe
-			if(byte2 == 0xf0){
-				if(byte1==0x25){
-					for(int y=0; y<81; y++){
-						for(int x=0; x<69; x++){			
-							game.player.playerModel[y][x] = kobeShootingModel[y][x];
-							game.player.x = 0;
-							game.player.prevX = 60;
-							game.player.y = 150;
-							game.player.y = 231;
-							game.player.playerID = 4;				
-						}	
-					}		
-					game.gameState = 2;
-					return;
-					
-				}	
-			}
-		}		
+		}	
 	}		
 }
 
