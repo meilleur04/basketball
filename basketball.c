@@ -2496,7 +2496,7 @@ bool drawVisual(){
 				}
 		}
 	}
-	for(long long int i = 0; i <100000;i++){
+	for(long long int i = 0; i <300000;i++){
 		i++;
 	}
 	if(game.net.score){
