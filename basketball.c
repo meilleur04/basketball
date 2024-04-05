@@ -2039,22 +2039,6 @@ void callBackAngle(){
 			game.background[y][x] = mainBackground[y][x];	
 		}
 	}
-	*(pixel_ctrl_ptr+1) = 0xC8000000; // first store the address in the 
-                                        // back buffer
-    /* now, swap the front/back buffers, to set the front buffer location */
-  	wait_for_vsync();
-    /* initialize a pointer to the pixel buffer, used by drawing functions */
-  	pixel_buffer_start = *pixel_ctrl_ptr-1;
-  	//clear_screen(); // pixel_buffer_start points to the pixel buffer
-	drawBackground();
-	drawCharacter();
-	drawBasketballNet();
-	drawVisual();
-	drawAngleBackground();
-    /* set back pixel buffer to start of SDRAM memory */
-  	*(pixel_ctrl_ptr) = 0xC0000000;
-  	pixel_buffer_start = *(pixel_ctrl_ptr); // we draw on the back buffer
-  	//clear_screen();
 	drawBackground();
 	drawCharacter();
 	drawBasketballNet();
@@ -2135,21 +2119,6 @@ void callBackAngle(){
 					game.aimBar.angle = game.aimBar.angleArray[prevAngle];					
 				}
 				
-				*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-															// back buffer
-				/* now, swap the front/back buffers, to set the front buffer location */
-				
-						/* initialize a pointer to the pixel buffer, used by drawing functions */
-				pixel_buffer_start = *pixel_ctrl_ptr;
-				//clear_screen(); // pixel_buffer_start points to the pixel buffer
-				
-				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 0xffff);
-				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 6447);
-				
-				/* set back pixel buffer to start of SDRAM memory */
-				*(pixel_ctrl_ptr + 1) = 0xC0000000;
-				pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-				//clear_screen();
 				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 0xffff);
 				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 6447);
 				
