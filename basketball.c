@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <time.h>
 void eraseVisual(int count);
+void test2work();
 bool drawVisual();
 void callbackVisual(double velocityInitial, double theta);
 void drawBackground();
@@ -1645,6 +1646,7 @@ int main(void)
 	displayLives();
 	displayScore();
 	displayHighScore();
+	int shsh = 0;
 	while(1){
 		int x = game.gameState;
 		switch(x){
@@ -1721,113 +1723,9 @@ int main(void)
 				break;
 
 			case 8:
-			
+			shsh++;
 				// If scored
-    if (game.net.score) {
-        srand(time(0));
-        int newX;
-        int newY;
-        int prevX;
-        int prevY;
-        game.currentScore += 3;
-
-        // Store the address in the back buffer
-        *(pixel_ctrl_ptr + 1) = 0xC8000000;
-        wait_for_vsync(); // Wait for vertical synchronization
-
-        // Initialize a pointer to the pixel buffer
-        pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-
-        prevX = game.net.x;
-        prevY = game.net.y;
-
-        eraseBasketballNet();
-
-        newX = (rand() % (236 - 148 + 1)) + 148;
-        newY = (rand() % (138 - 20 + 1)) + 20;
-
-        game.net.x = newX;
-        game.net.y = newY;
-
-        drawBasketballNet();
-
-        // Set back pixel buffer to start of SDRAM memory
-        *pixel_ctrl_ptr = 0xC0000000;
-        pixel_buffer_start = *pixel_ctrl_ptr; // Draw on the front buffer
-
-        prevX = game.net.x;
-        prevY = game.net.y;
-        eraseBasketballNet();
-
-        game.net.x = newX;
-        game.net.y = newY;
-        drawBasketballNet();
-
-        game.net.prevX = newX;
-        game.net.prevY = newY;
-
-        game.gameState = 3;
-        game.net.score = false;
-
-        game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
-        game.net.leftRimX = game.net.x + 39 - 31 / 2;
-    } else {
-        game.lives--;
-        // Reset game if lives = 0
-        game.gameState = 3;
-
-        if (game.lives <= 0) {
-            displayHighScore();
-            game.gameState = 3;
-            game.currentScore = 0;
-
-            int newX;
-            int newY;
-            int prevX;
-            int prevY;
-
-            // Store the address in the back buffer
-            *(pixel_ctrl_ptr + 1) = 0xC8000000;
-            wait_for_vsync(); // Wait for vertical synchronization
-
-            // Initialize a pointer to the pixel buffer
-            pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-
-            prevX = game.net.x;
-            prevY = game.net.y;
-
-            eraseBasketballNet();
-
-            newX = 275 - 39;
-            newY = 70 - 31;
-
-            game.net.x = newX;
-            game.net.y = newY;
-
-            drawBasketballNet();
-
-            // Set back pixel buffer to start of SDRAM memory
-            *pixel_ctrl_ptr = 0xC0000000;
-            pixel_buffer_start = *pixel_ctrl_ptr; // Draw on the front buffer
-
-            prevX = game.net.x;
-            prevY = game.net.y;
-            eraseBasketballNet();
-
-            game.net.x = newX;
-            game.net.y = newY;
-            drawBasketballNet();
-
-            game.net.prevX = newX;
-            game.net.prevY = newY;
-
-            game.gameState = 3;
-            game.net.score = false;
-            game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
-            game.net.leftRimX = game.net.x + 39 - 31 / 2;
-            game.lives = 3;
-        }
-    }
+				test2work();
 				displayScore();
 				
 				displayLives();
@@ -1838,6 +1736,48 @@ int main(void)
 		}
 	}
 	
+}
+
+void test2work() {
+    if (game.net.score) {
+        srand(time(0));
+        int newX = (rand() % (236 - 148 + 1)) + 148;
+        int newY = (rand() % (138 - 20 + 1)) + 20;
+
+        game.currentScore += 3;
+        eraseBasketballNet();
+        game.net.x = newX;
+        game.net.y = newY;
+        drawBasketballNet();
+
+        game.net.prevX = newX;
+        game.net.prevY = newY;
+
+        game.gameState = 3;
+        game.net.score = false;
+        game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
+        game.net.leftRimX = game.net.x + 39 - 31 / 2;
+    } else {
+        game.lives--;
+        if (game.lives <= 0) {
+            displayHighScore();
+            game.gameState = 3;
+            game.currentScore = 0;
+            int newX = 275 - 39;
+            int newY = 70 - 31;
+            eraseBasketballNet();
+            game.net.x = newX;
+            game.net.y = newY;
+            drawBasketballNet();
+            game.net.prevX = newX;
+            game.net.prevY = newY;
+            game.gameState = 3;
+            game.net.score = false;
+            game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
+            game.net.leftRimX = game.net.x + 39 - 31 / 2;
+            game.lives = 3;
+        }
+    }
 }
 
 void displayHighScore(){
@@ -2105,7 +2045,7 @@ void callBackAngle(){
 		
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
-		for(long long int i = 0; i < 500000; i ++){
+		for(long long int i = 0; i < 100000; i ++){
 
 		}
 		int f= 50000;
