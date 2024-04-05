@@ -2079,6 +2079,7 @@ void callBackAngle(){
 			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
 			
 		}
+		drawAngleBackground();
 		prevAngle = angleCounter;
 		angleCounter+=angleDirection;
 		
