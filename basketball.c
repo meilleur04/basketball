@@ -1974,6 +1974,9 @@ void callBackPower(){
 		}
 		
 		drawSlider();
+		for(long long int i = 0; i < 300000; i ++){
+
+		}
 		
 		//delay loop
 		int f = 8000;
