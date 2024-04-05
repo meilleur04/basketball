@@ -1902,8 +1902,6 @@ erasePowerBar();
 eraseVisual(1); 
 }
 void callBackPower(){
-	*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-  	pixel_buffer_start = *pixel_ctrl_ptr;
 	drawPowerBar();
   	
 	int count = 0;
@@ -1963,13 +1961,6 @@ void callBackPower(){
 					double adjustment = 8 * heightRatio;
 						
 					game.powerBar.velocity = 14 + (int) adjustment;
-						
-						
-					
-					*(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
-															// back buffer
-						/* initialize a pointer to the pixel buffer, used by drawing functions */
-					pixel_buffer_start = *pixel_ctrl_ptr;
 					
 					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-160)][(game.powerBar.xSlider+7) - (52) -1]);
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
@@ -1995,29 +1986,18 @@ void callBackPower(){
 
 
 void drawSlider(){
-	
-	
 	draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, 0 );
-	
 }
 
 void eraseSlider(){
-	
-	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );
-	
-	
+	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );	
 }
+
 void drawPowerBar(){
-	
 	for(int y = 160;y<230;y++){
-		
 		for(int x= 52; x< 62; x++){
-			
-				
 				plot_pixel(x,y,game.powerBar.powerBarArray[y-160][x-52]);
-			
 		}
-		
 	}
 }
 
