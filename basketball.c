@@ -2101,6 +2101,9 @@ void callBackAngle(){
 		
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
+		for(long long int i = 0; i < 500000; i ++){
+
+		}
 		int f= 50000;
 		while(f!=0){
 			
@@ -2131,9 +2134,7 @@ void callBackAngle(){
 				else{
 					game.aimBar.angle = game.aimBar.angleArray[prevAngle];					
 				}
-				
-				draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 0xffff);
-				draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 6447);
+
 				
 				while(1){
 					PS2_data = *(PS2_ptr);
