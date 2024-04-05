@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
-#include <math.h>
 void eraseVisual(int count);
 bool drawVisual();
 void callbackVisual(double velocityInitial, double theta);
@@ -30,6 +29,40 @@ void displayHighScore();
 void wait_for_vsync();
 void audio_playback_mono(int *samples, int n);
 double distance(int x1, int y1, int x2, int y2);
+
+double sqrta(double x){
+	double result = 1;
+	double temp = 0;
+	while (result != temp){
+		temp = result;
+		result = 0.5 * (result + x / result);
+	}
+	return result;
+}
+
+double sine(double x){
+	double result = 0;
+	double term = x;
+	int n = 1;
+	while (term > 0.0001 || term < -0.0001){
+		result += term;
+		term = -term * x * x / ((2 * n) * (2 * n + 1));
+		n++;
+	}
+	return result;
+}
+
+double cosine(double x){
+	double result = 0;
+	double term = 1;
+	int n = 1;
+	while (term > 0.0001 || term < -0.0001){
+		result += term;
+		term = -term * x * x / ((2 * n - 1) * (2 * n));
+		n++;
+	}
+	return result;
+}
 
 struct Basketball{
 	int dy,dx, x, y, prevX, prevY, startX,startY;
@@ -2342,7 +2375,7 @@ void callbackScore(){
 }
 
 double distance(int x1, int y1, int x2, int y2){
-	return sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+	return sqrta((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
 
 void callbackVisual(double velocityInitial, double theta){
@@ -2351,8 +2384,8 @@ void callbackVisual(double velocityInitial, double theta){
 	
 	angle = angle*3.1415/180.0;
 	
-    game.basketball.dy = (int) -1*velocity*sin(angle);
-	game.basketball.dx = (int) velocity*cos(angle);
+    game.basketball.dy = (int) -1*velocity*sine(angle);
+	game.basketball.dx = (int) velocity*cosine(angle);
 	int count =0;
 	bool exit_drawvisual=false;
 	while (1)
