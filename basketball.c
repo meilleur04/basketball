@@ -2098,10 +2098,13 @@ void SetAngleBar(){
 		if(count!=0){
 			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
 			wait_for_vsync();
+			pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
 		}
 		drawAngleBackground();
 		wait_for_vsync();
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+		drawAngleBackground();
 		prevAngle = angleCounter;
 		angleCounter+=angleDirection;
 		
@@ -2126,6 +2129,7 @@ void SetAngleBar(){
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
 		wait_for_vsync();
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
 		for(long long int i = 0; i < 100000; i ++){
 
 		}
@@ -2173,6 +2177,8 @@ void SetAngleBar(){
 			}			
 			f--;	
 		}
+		wait_for_vsync();
+		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	}	
 	
 	
