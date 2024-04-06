@@ -1624,13 +1624,23 @@ const int powerBar[70][10] = {
 const int hexdisplay[10] = {0x3f,0x06,0x5b,0x4f,0x66,0x6d, 0x7d, 0x07, 0x7f, 0x67};
 
 volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
+short int Buffer2[240][512];
 #define RLEDs ((volatile long *) 0xFF200000)
 #define HEX3_0 ((volatile long *) 0xFF200020)
 #define HEX4_5 ((volatile long *) 0xFF200030)
 
 int main(void)
 {	
+	volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+	*(pixel_ctrl_ptr + 1) = (int) &Buffer1;
+	wait_for_vsync();
 	pixel_buffer_start = *pixel_ctrl_ptr;
+	clear_screen();
+	*(pixel_ctrl_ptr + 1) = (int) &Buffer2;
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+	clear_screen();
+	
 	game.gameState = 0;
 	
 	game.currentScore = 0;
@@ -1696,6 +1706,8 @@ int main(void)
 			//inital screen of game
 			case 0:
 	drawBackground();
+	wait_for_vsync();
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
 	unsigned char byte3 = 0;
@@ -1912,12 +1924,23 @@ void callBackTiming(){
 
 // Erase elements from the front buffer
 eraseAngleBackground();
+wait_for_vsync();
 game.basketball.prevX = 37;
 game.basketball.prevY = 138;
 erasePowerBar();
+wait_for_vsync();
 eraseVisual(1); 
+wait_for_vsync();
+pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+// Erase elements from the back buffer
+eraseAngleBackground();
+erasePowerBar();
+eraseVisual(1);
 }
 void callBackPower(){
+	drawPowerBar();
+	wait_for_vsync();
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	drawPowerBar();
   	
 	int count = 0;
@@ -1957,6 +1980,8 @@ void callBackPower(){
 		}
 		
 		drawSlider();
+		wait_for_vsync();
+		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 		for(long long int i = 0; i < 300000; i ++){
 
 		}
@@ -1981,9 +2006,9 @@ void callBackPower(){
 						
 					game.powerBar.velocity = 14 + (int) adjustment;
 					
-					draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, game.powerBar.powerBarArray[(game.powerBar.ySlider-160)][(game.powerBar.xSlider+7) - (52) -1]);
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
-					
+					wait_for_vsync();
+					pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 					game.powerBar.ySlider = 230 -1;	
 						
 					while(1){
@@ -2043,6 +2068,16 @@ void SetAngleBar(){
 	drawBasketballNet();
 	drawVisual();
 	drawAngleBackground();
+	wait_for_vsync();
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
+	drawBackground();
+	drawCharacter();
+	drawBasketballNet();
+	drawVisual();
+	drawAngleBackground();
+	
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
@@ -2061,11 +2096,12 @@ void SetAngleBar(){
 
 	while (1) {
 		if(count!=0){
-			
 			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
-			
+			wait_for_vsync();
 		}
 		drawAngleBackground();
+		wait_for_vsync();
+		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 		prevAngle = angleCounter;
 		angleCounter+=angleDirection;
 		
@@ -2088,6 +2124,8 @@ void SetAngleBar(){
 		
 		//draws blue line 
 		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
+		wait_for_vsync();
+		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 		for(long long int i = 0; i < 100000; i ++){
 
 		}
@@ -2199,7 +2237,9 @@ void callBackInstructions(){
 	}
 	
 	drawBackground();
-	
+	wait_for_vsync();
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
 	unsigned char byte3 = 0;
@@ -2240,6 +2280,8 @@ void callBackCharacter(){
 		}	
 	}
 	drawBackground();
+	wait_for_vsync();
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	unsigned char byte1 = 0;
 	unsigned char byte2 = 0;
 	unsigned char byte3 = 0;
@@ -2456,6 +2498,9 @@ void callbackVisual(double velocityInitial, double theta){
 		break;
 	}
 	count++;
+
+	wait_for_vsync();
+	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	}
 	
 }
@@ -2571,16 +2616,6 @@ void draw_line(int x0, int y0,int x1, int y1, short int line_color){
 	}
 }
 
-void wait_for_vsync(){
-	volatile int* pixel_ctrl_ptr= (int*) 0xFF203020;
-	int status;
-	*pixel_ctrl_ptr =1;
-	status = *(pixel_ctrl_ptr+3);
-	while((status & 0x01)!=0){
-		status = *(pixel_ctrl_ptr+3);
-	}
-}
-
 void audio_playback_mono() {
             audiop->control = 0x8; // clear the output FIFOs
             audiop->control = 0x0; // resume input conversion
@@ -2592,3 +2627,13 @@ void audio_playback_mono() {
               }
              }
 }	
+
+void wait_for_vsync(){
+	volatile int* pixel_ctrl_ptr = (int *)0xff203020;
+	int status;
+	*pixel_ctrl_ptr = 1;
+	status = *(pixel_ctrl_ptr+3);
+	while((status&0x01)!=0){
+		status = *(pixel_ctrl_ptr + 3);
+	}
+}
