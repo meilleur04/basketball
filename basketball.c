@@ -30,6 +30,7 @@ void displayHighScore();
 void wait_for_vsync();
 void audio_playback_mono();
 double distance(int x1, int y1, int x2, int y2);
+void clear_screen();
 
 double sqrta(double x){
 	double result = 1;
