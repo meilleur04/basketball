@@ -5,7 +5,7 @@
 void eraseVisual(int count);
 void test2work();
 bool drawVisual();
-void callbackVisual(double velocityInitial, double theta);
+void callbackVisual(double speedoftheballInitial, double theta);
 void drawBackground();
 void draw_line(int x0, int y0,int x1, int y1, short int line_color);
 void callBackCharacter();
@@ -67,7 +67,7 @@ double cosine(double x){
 }
 
 struct Basketball{
-	int dy,dx, x, y, prevX, prevY, startX,startY;
+	int changeiny,changeinx, x, y, prevX, prevY, starting_point_of_x,starting_point_of_y;
 };
 
 struct Net{
@@ -83,13 +83,13 @@ struct Player{
 struct PowerBar{
 	int xSlider,ySlider, prevXSlider, prevYSlider, width, height, xFixed, yFixed;
 	int power[9]; //holds power values
-	int powerBarArray[70][10];
-	int velocity;
+	int ArrayforPowerBar[70][10];
+	int speedoftheball;
 };
 
 struct AimBar{
 	int xEnd,yEnd, prevXEnd, prevYEnd, xFixed, yFixed;
-	int rightX,rightY;
+	int RIGHTLOCATIONOFX,rightLocationOfX;
 	int topX, topY;
 	double angle;
 	int pointX[10];
@@ -1649,8 +1649,8 @@ int main(void)
 	game.lives = 3;
 	game.highScore = 0;
 	
-	game.basketball.x=37;game.basketball.y= 138; game.basketball.dy =0;game.basketball.dx=0; game.basketball.prevX=0; game.basketball.prevY=0;
-	game.basketball.startX = 37; game.basketball.startY=138;
+	game.basketball.x=37;game.basketball.y= 138; game.basketball.changeiny =0;game.basketball.changeinx=0; game.basketball.prevX=0; game.basketball.prevY=0;
+	game.basketball.starting_point_of_x = 37; game.basketball.starting_point_of_y=138;
 	
 	game.net.x= 275 - 39;game.net.y= 70 - 31;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
 	game.net.rightRimX = game.net.x +39 + 31/2 +1; game.net.leftRimX = game.net.x +39 - 31/2;
@@ -1662,7 +1662,7 @@ int main(void)
 	
 	for(int y=0;y<70;y++){
 		for(int x=0; x<10;x++){
-			game.powerBar.powerBarArray[y][x] = powerBar[y][x];	
+			game.powerBar.ArrayforPowerBar[y][x] = powerBar[y][x];	
 		}
 	}
 	
@@ -1678,7 +1678,7 @@ int main(void)
 	//starting point for draw line
 	game.aimBar.xFixed=1; game.aimBar.yFixed=28;
 	
-	game.aimBar.rightX=23;game.aimBar.rightY=28; game.aimBar.topX=0; game.aimBar.topY=6;game.aimBar.angle=0.0;
+	game.aimBar.RIGHTLOCATIONOFX=23;game.aimBar.rightLocationOfX=28; game.aimBar.topX=0; game.aimBar.topY=6;game.aimBar.angle=0.0;
 	
 	int angle = 35;
 	for(int i =0;i<10;i++){
@@ -1768,7 +1768,7 @@ int main(void)
 				break;
 			
 			case 6:
-				callbackVisual(game.powerBar.velocity,game.aimBar.angle);
+				callbackVisual(game.powerBar.speedoftheball,game.aimBar.angle);
 				//audio_playback_mono(samples, samples_n);
 				eraseVisual(1);
 				// redraw rim original color in case its green
@@ -2006,7 +2006,7 @@ void callBackPower(){
 					double heightRatio = (double)((230 -1) - game.powerBar.ySlider)/(double)game.powerBar.height;
 					double adjustment = 8 * heightRatio;
 						
-					game.powerBar.velocity = 14 + (int) adjustment;
+					game.powerBar.speedoftheball = 14 + (int) adjustment;
 					
 					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
 					wait_for_vsync();
@@ -2036,13 +2036,13 @@ void drawSlider(){
 }
 
 void eraseSlider(){
-	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.powerBarArray[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );	
+	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.ArrayforPowerBar[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );	
 }
 
 void drawPowerBar(){
 	for(int y = 160;y<230;y++){
 		for(int x= 52; x< 62; x++){
-				plot_pixel(x,y,game.powerBar.powerBarArray[y-160][x-52]);
+				plot_pixel(x,y,game.powerBar.ArrayforPowerBar[y-160][x-52]);
 		}
 	}
 }
@@ -2388,20 +2388,20 @@ void drawCharacter(){
 void callbackScore(){
 	
 	if( game.basketball.prevY+15/2<=game.net.y+31 && game.basketball.x +15/2>= game.net.x && game.basketball.y+ 15/2>= game.net.y+15 && game.basketball.x +15/2<= game.net.x + 39 + 15*1.5 ){
-		double dx = game.basketball.x -game.basketball.prevX;
-		double dy = game.basketball.y-game.basketball.prevY;
+		double changeinx = game.basketball.x -game.basketball.prevX;
+		double changeiny = game.basketball.y-game.basketball.prevY;
 		double m;
-		if (dx != 0 && dy!=0){
-			m = dy/dx;
+		if (changeinx != 0 && changeiny!=0){
+			m = changeiny/changeinx;
 			double intersectX = (game.net.y+31 - (game.basketball.prevY+15/2)+ m*game.basketball.prevX+15/2)/m;
 
 				if (intersectX<= game.net.x+39+31/2.0  && intersectX>= game.net.x+39-31/2.0 ){
-					game.basketball.dy = 1;
+					game.basketball.changeiny = 1;
 					
-					if(game.basketball.dx < 0){
-						game.basketball.dx =-1;
+					if(game.basketball.changeinx < 0){
+						game.basketball.changeinx =-1;
 					}else{
-						game.basketball.dx =1;
+						game.basketball.changeinx =1;
 					}
 					audio_playback_mono();
 					game.net.score =true;
@@ -2417,14 +2417,14 @@ double distance(int x1, int y1, int x2, int y2){
 	return sqrta((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
 
-void callbackVisual(double velocityInitial, double theta){
-	double velocity = velocityInitial;
+void callbackVisual(double speedoftheballInitial, double theta){
+	double speedoftheball = speedoftheballInitial;
 	double angle = theta;
 	
 	angle = angle*3.1415/180.0;
 	
-    game.basketball.dy = (int) -1*velocity*sine(angle);
-	game.basketball.dx = (int) velocity*cosine(angle);
+    game.basketball.changeiny = (int) -1*speedoftheball*sine(angle);
+	game.basketball.changeinx = (int) speedoftheball*cosine(angle);
 	int count =0;
 	bool exit_drawvisual=false;
 	while (1)
@@ -2439,26 +2439,26 @@ void callbackVisual(double velocityInitial, double theta){
 	bool collisionY= false;
 	
 	// left rim
-	if(distance (game.basketball.x+15/2 +game.basketball.dx, game.basketball.y +15/2+game.basketball.dy , game.net.leftRimX, game.net.y + 31) < 15/2 +2){
+	if(distance (game.basketball.x+15/2 +game.basketball.changeinx, game.basketball.y +15/2+game.basketball.changeiny , game.net.leftRimX, game.net.y + 31) < 15/2 +2){
 		collisionX = true;
 		//outer rim 
 		if(game.basketball.x < game.net.leftRimX){
 			game.basketball.x = game.net.leftRimX - 15;
-			game.basketball.dx= -1* abs(game.basketball.dx/2);
+			game.basketball.changeinx= -1* abs(game.basketball.changeinx/2);
 		}else{
 			//inner rim
 			collisionY=true;
 			game.basketball.x = game.net.leftRimX + 15 +1;
 			game.basketball.y = game.net.y +31 -1;
-			game.basketball.dx= abs(game.basketball.dx/2);
+			game.basketball.changeinx= abs(game.basketball.changeinx/2);
 			game.net.score = true;
-			game.basketball.dy =1;
-			game.basketball.dx =1;
+			game.basketball.changeiny =1;
+			game.basketball.changeinx =1;
 		}
 		
 	}
 	// right rim
-	if(distance (game.basketball.x+15/2 +game.basketball.dx, game.basketball.y +15/2+game.basketball.dy , game.net.rightRimX, game.net.y + 31) < 15/2 +2){
+	if(distance (game.basketball.x+15/2 +game.basketball.changeinx, game.basketball.y +15/2+game.basketball.changeiny , game.net.rightRimX, game.net.y + 31) < 15/2 +2){
 		collisionX = true;
 		//inner irm
 		if(game.basketball.x < game.net.rightRimX){
@@ -2466,34 +2466,34 @@ void callbackVisual(double velocityInitial, double theta){
 			printf("right rim1");
 			game.basketball.x = game.net.rightRimX - 15 -1;
 			game.basketball.y = game.net.y +31 -1;
-			game.basketball.dx= -1* abs(game.basketball.dx/2);
+			game.basketball.changeinx= -1* abs(game.basketball.changeinx/2);
 			game.net.score =true;
-			game.basketball.dy =1;
-			game.basketball.dx = -1;			
+			game.basketball.changeiny =1;
+			game.basketball.changeinx = -1;			
 		}else{
 			game.basketball.x = game.net.rightRimX+ 1;
-			game.basketball.dx= abs(game.basketball.dx/2);
+			game.basketball.changeinx= abs(game.basketball.changeinx/2);
 		}
 	}
 	
 	if (game.basketball.x >= 320-15)
-		game.basketball.dx= -1* abs(game.basketball.dx/1.5);
+		game.basketball.changeinx= -1* abs(game.basketball.changeinx/1.5);
 	if (game.basketball.x <= 0)
-		game.basketball.dx= abs(game.basketball.dx/2);
+		game.basketball.changeinx= abs(game.basketball.changeinx/2);
 	if(game.basketball.y >= 240-15){
-		game.basketball.dy = -1*abs(game.basketball.dy/2);
-		game.basketball.dx = 0;
+		game.basketball.changeiny = -1*abs(game.basketball.changeiny/2);
+		game.basketball.changeinx = 0;
 	}
 	if(game.basketball.y +15<240){
-		game.basketball.dy+=1;
+		game.basketball.changeiny+=1;
 	}
 	
 	
 	if(!collisionX){
-		game.basketball.x+=game.basketball.dx;
+		game.basketball.x+=game.basketball.changeinx;
 	}
 	if(!collisionY){
-		game.basketball.y+=game.basketball.dy;
+		game.basketball.y+=game.basketball.changeiny;
 	}
 	if(!game.net.score){
 		callbackScore();
@@ -2514,9 +2514,9 @@ void callbackVisual(double velocityInitial, double theta){
 }
 
 bool drawVisual(){
-	if(game.basketball.dy == 0 && game.basketball.dx ==0 && game.basketball.y +15>=240 ){
-		game.basketball.y = game.basketball.startY;
-		game.basketball.x = game.basketball.startX;
+	if(game.basketball.changeiny == 0 && game.basketball.changeinx ==0 && game.basketball.y +15>=240 ){
+		game.basketball.y = game.basketball.starting_point_of_y;
+		game.basketball.x = game.basketball.starting_point_of_x;
 		game.gameState=8;
 		if(game.net.score){
 			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31,64704);
