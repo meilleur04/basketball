@@ -1779,7 +1779,7 @@ int main(void)
 				break;
 
 			case 8:
-			shsh++;
+
 				// If scored
 				test2work();
 				displayScore();
@@ -1815,7 +1815,10 @@ void test2work() {
         game.net.leftRimX = game.net.x + 39 - 31 / 2;
     } else {
         game.lives--;
+		game.gameState = 3;
+		
         if (game.lives <= 0) {
+			printf("hello");
             displayHighScore();
             game.gameState = 3;
             game.currentScore = 0;
@@ -1833,6 +1836,9 @@ void test2work() {
             game.net.leftRimX = game.net.x + 39 - 31 / 2;
             game.lives = 3;
         }
+
+		
+
     }
 }
 
