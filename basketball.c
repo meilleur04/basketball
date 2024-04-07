@@ -1779,7 +1779,7 @@ int main(void)
 				break;
 
 			case 8:
-
+			shsh++;
 				// If scored
 				test2work();
 				displayScore();
@@ -1796,6 +1796,7 @@ int main(void)
 
 void test2work() {
     if (game.net.score) {
+       
         int newX = (rand() % (236 - 148 + 1)) + 148;
         int newY = (rand() % (138 - 20 + 1)) + 20;
 
@@ -1815,9 +1816,7 @@ void test2work() {
     } else {
         game.lives--;
 		game.gameState = 3;
-		
         if (game.lives <= 0) {
-			printf("hello");
             displayHighScore();
             game.gameState = 3;
             game.currentScore = 0;
@@ -1835,9 +1834,6 @@ void test2work() {
             game.net.leftRimX = game.net.x + 39 - 31 / 2;
             game.lives = 3;
         }
-
-		
-
     }
 }
 
