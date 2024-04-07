@@ -11,9 +11,9 @@ void draw_line(int x0, int y0,int x1, int y1, short int line_color);
 void callBackCharacter();
 void callBackInstructions();
 void SetAngleBar();
-void drawBasketballNet();
+void drawBasketballstructforgameBasketBallnet();
 void drawCharacter();
-void drawBasketballNet();
+void drawBasketballstructforgameBasketBallnet();
 void drawAngleBackground();
 void eraseAngleBackground();
 void callBackPower();
@@ -23,7 +23,7 @@ void erasePowerBar();
 void eraseSlider();
 void callBackTiming();
 void plot_pixel(int x, int y, short int line_color);
-void eraseBasketballNet();
+void eraseBasketballstructforgameBasketBallnet();
 void displayLives();
 void displayScore();
 void displayHighScore();
@@ -66,11 +66,11 @@ double cosine(double x){
 	return result;
 }
 
-struct Basketball{
+struct Basketballstructforgame{
 	int changeiny,changeinx, x, y, prevX, prevY, starting_point_of_x,starting_point_of_y;
 };
 
-struct Net{
+struct BasketBallnet{
 	int x, y, prevX, prevY, leftRimX, leftRimY, rightRimX, rightRimY;;
 	bool score;
 };
@@ -87,7 +87,7 @@ struct PowerBar{
 	int speedoftheball;
 };
 
-struct AimBar{
+struct aimbarforangle{
 	int xEnd,yEnd, prevXEnd, prevYEnd, xFixed, yFixed;
 	int RIGHTLOCATIONOFX,rightLocationOfX;
 	int topX, topY;
@@ -97,11 +97,11 @@ struct AimBar{
 	int angleArray[10];
 };
 struct Game{
-	struct Basketball basketball;
-	struct Net net;
+	struct Basketballstructforgame Basketballstructforgame;
+	struct BasketBallnet BasketBallnet;
 	struct Player player;
 	struct PowerBar powerBar;
-	struct AimBar aimBar;
+	struct aimbarforangle aimbarforangle;
 	int background[240][320];
 	int gameState;
 	int currentScore;
@@ -133,8 +133,15 @@ volatile int pixel_buffer_start;
 struct Game game;
 const int anglePointY[10] = {23,20,17,14,11,8,5,3,1,0};
 const int anglePointX[10] = {28,28,27,26,24,21,18,15,11,6};
+const int hexdisplay[10] = {0x3f,0x06,0x5b,0x4f,0x66,0x6d, 0x7d, 0x07, 0x7f, 0x67};
+volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
+short int Buffer2[240][512];
+#define RLEDs ((volatile long *) 0xFF200000)
+#define HEX3_0 ((volatile long *) 0xFF200020)
+#define HEX4_5 ((volatile long *) 0xFF200030)
 
-const int basketballModel[15][15] = {
+const int BasketballstructforgameModel[15][15] = {
 	{51168,51168,51168,51168,51168,0,0,0,0,0,51168,51168,51168,51168,51168},
 	{51168,51168,51168,0,0,64164,64164,0,64164,64164,0,0,51168,51168,51168},
 	{51168,51168,0,64164,64164,64164,64164,0,64164,64164,64164,64164,0,51168,51168},
@@ -1497,7 +1504,7 @@ const int angle[30][30] = {
 	{51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168,51168},
 
 };
-const int basketballNetModel[47][80] = {
+const int BasketballstructforgameBasketBallnetModel[47][80] = {
 	{45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283,45283},
 	{45283,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,45283},
 	{45283,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,63294,45283},
@@ -1622,15 +1629,6 @@ const int powerBar[70][10] = {
 
 };
 
-const int hexdisplay[10] = {0x3f,0x06,0x5b,0x4f,0x66,0x6d, 0x7d, 0x07, 0x7f, 0x67};
-
-volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
-short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
-short int Buffer2[240][512];
-#define RLEDs ((volatile long *) 0xFF200000)
-#define HEX3_0 ((volatile long *) 0xFF200020)
-#define HEX4_5 ((volatile long *) 0xFF200030)
-
 int main(void)
 {	
 	volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
@@ -1649,11 +1647,11 @@ int main(void)
 	game.lives = 3;
 	game.highScore = 0;
 	
-	game.basketball.x=37;game.basketball.y= 138; game.basketball.changeiny =0;game.basketball.changeinx=0; game.basketball.prevX=0; game.basketball.prevY=0;
-	game.basketball.starting_point_of_x = 37; game.basketball.starting_point_of_y=138;
+	game.Basketballstructforgame.x=37;game.Basketballstructforgame.y= 138; game.Basketballstructforgame.changeiny =0;game.Basketballstructforgame.changeinx=0; game.Basketballstructforgame.prevX=0; game.Basketballstructforgame.prevY=0;
+	game.Basketballstructforgame.starting_point_of_x = 37; game.Basketballstructforgame.starting_point_of_y=138;
 	
-	game.net.x= 275 - 39;game.net.y= 70 - 31;game.net.prevX= game.net.x; game.net.prevY= game.net.y; game.net.score=false; 
-	game.net.rightRimX = game.net.x +39 + 31/2 +1; game.net.leftRimX = game.net.x +39 - 31/2;
+	game.BasketBallnet.x= 275 - 39;game.BasketBallnet.y= 70 - 31;game.BasketBallnet.prevX= game.BasketBallnet.x; game.BasketBallnet.prevY= game.BasketBallnet.y; game.BasketBallnet.score=false; 
+	game.BasketBallnet.rightRimX = game.BasketBallnet.x +39 + 31/2 +1; game.BasketBallnet.leftRimX = game.BasketBallnet.x +39 - 31/2;
 	
 	game.player.x=0; game.player.y=0;game.player.prevX=0;game.player.prevY=0;game.player.playerID=0;
 	
@@ -1674,18 +1672,18 @@ int main(void)
 	}
 
 	//ending point for draw lines
-	game.aimBar.xEnd=0;game.aimBar.yEnd=0;game.aimBar.prevXEnd=0; game.aimBar.prevYEnd=0; 
+	game.aimbarforangle.xEnd=0;game.aimbarforangle.yEnd=0;game.aimbarforangle.prevXEnd=0; game.aimbarforangle.prevYEnd=0; 
 	//starting point for draw line
-	game.aimBar.xFixed=1; game.aimBar.yFixed=28;
+	game.aimbarforangle.xFixed=1; game.aimbarforangle.yFixed=28;
 	
-	game.aimBar.RIGHTLOCATIONOFX=23;game.aimBar.rightLocationOfX=28; game.aimBar.topX=0; game.aimBar.topY=6;game.aimBar.angle=0.0;
+	game.aimbarforangle.RIGHTLOCATIONOFX=23;game.aimbarforangle.rightLocationOfX=28; game.aimbarforangle.topX=0; game.aimbarforangle.topY=6;game.aimbarforangle.angle=0.0;
 	
 	int angle = 35;
 	for(int i =0;i<10;i++){
-		game.aimBar.pointX[i] = anglePointX[i];
-		game.aimBar.pointY[i] = anglePointY[i];
+		game.aimbarforangle.pointX[i] = anglePointX[i];
+		game.aimbarforangle.pointY[i] = anglePointY[i];
 		//sets angle to 35-80;
-		game.aimBar.angleArray[i] = angle;
+		game.aimbarforangle.angleArray[i] = angle;
 		angle+=5;
 	}
 	
@@ -1768,12 +1766,12 @@ int main(void)
 				break;
 			
 			case 6:
-				callbackVisual(game.powerBar.speedoftheball,game.aimBar.angle);
+				callbackVisual(game.powerBar.speedoftheball,game.aimbarforangle.angle);
 				//audio_playback_mono(samples, samples_n);
 				eraseVisual(1);
 				// redraw rim original color in case its green
-				if(game.net.score){
-					draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 64704);
+				if(game.BasketBallnet.score){
+					draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 64704);
 				}
 				// audio_playback_mono();
 				break;
@@ -1795,24 +1793,24 @@ int main(void)
 }
 
 void test2work() {
-    if (game.net.score) {
+    if (game.BasketBallnet.score) {
        
         int newX = (rand() % (236 - 148 + 1)) + 148;
         int newY = (rand() % (138 - 20 + 1)) + 20;
 
         game.currentScore += 3;
-        eraseBasketballNet();
-        game.net.x = newX;
-        game.net.y = newY;
-        drawBasketballNet();
+        eraseBasketballstructforgameBasketBallnet();
+        game.BasketBallnet.x = newX;
+        game.BasketBallnet.y = newY;
+        drawBasketballstructforgameBasketBallnet();
 
-        game.net.prevX = newX;
-        game.net.prevY = newY;
+        game.BasketBallnet.prevX = newX;
+        game.BasketBallnet.prevY = newY;
 
         game.gameState = 3;
-        game.net.score = false;
-        game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
-        game.net.leftRimX = game.net.x + 39 - 31 / 2;
+        game.BasketBallnet.score = false;
+        game.BasketBallnet.rightRimX = game.BasketBallnet.x + 39 + 31 / 2 + 1;
+        game.BasketBallnet.leftRimX = game.BasketBallnet.x + 39 - 31 / 2;
     } else {
         game.lives--;
 		game.gameState = 3;
@@ -1822,16 +1820,16 @@ void test2work() {
             game.currentScore = 0;
             int newX = 275 - 39;
             int newY = 70 - 31;
-            eraseBasketballNet();
-            game.net.x = newX;
-            game.net.y = newY;
-            drawBasketballNet();
-            game.net.prevX = newX;
-            game.net.prevY = newY;
+            eraseBasketballstructforgameBasketBallnet();
+            game.BasketBallnet.x = newX;
+            game.BasketBallnet.y = newY;
+            drawBasketballstructforgameBasketBallnet();
+            game.BasketBallnet.prevX = newX;
+            game.BasketBallnet.prevY = newY;
             game.gameState = 3;
-            game.net.score = false;
-            game.net.rightRimX = game.net.x + 39 + 31 / 2 + 1;
-            game.net.leftRimX = game.net.x + 39 - 31 / 2;
+            game.BasketBallnet.score = false;
+            game.BasketBallnet.rightRimX = game.BasketBallnet.x + 39 + 31 / 2 + 1;
+            game.BasketBallnet.leftRimX = game.BasketBallnet.x + 39 - 31 / 2;
             game.lives = 3;
         }
     }
@@ -1927,8 +1925,8 @@ void callBackTiming(){
 // Erase elements from the front buffer
 eraseAngleBackground();
 wait_for_vsync();
-game.basketball.prevX = 37;
-game.basketball.prevY = 138;
+game.Basketballstructforgame.prevX = 37;
+game.Basketballstructforgame.prevY = 138;
 erasePowerBar();
 wait_for_vsync();
 eraseVisual(1); 
@@ -2067,7 +2065,7 @@ void SetAngleBar(){
 	}
 	drawBackground();
 	drawCharacter();
-	drawBasketballNet();
+	drawBasketballstructforgameBasketBallnet();
 	drawVisual();
 	drawAngleBackground();
 	wait_for_vsync();
@@ -2075,7 +2073,7 @@ void SetAngleBar(){
 
 	drawBackground();
 	drawCharacter();
-	drawBasketballNet();
+	drawBasketballstructforgameBasketBallnet();
 	drawVisual();
 	drawAngleBackground();
 	
@@ -2093,15 +2091,15 @@ void SetAngleBar(){
 	int angleCounter = 0;
 	int angleDirection = 1;
 	int prevAngle = 0;
-	game.aimBar.xEnd = 37 +15  + game.aimBar.pointX[angleCounter];
-	game.aimBar.yEnd = 138 - 30 + game.aimBar.pointY[angleCounter];	
+	game.aimbarforangle.xEnd = 37 +15  + game.aimbarforangle.pointX[angleCounter];
+	game.aimbarforangle.yEnd = 138 - 30 + game.aimbarforangle.pointY[angleCounter];	
 
 	while (1) {
 		if(count!=0){
-			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
+			draw_line(game.aimbarforangle.prevXEnd,game.aimbarforangle.prevYEnd,game.aimbarforangle.xFixed + (37 +15) , game.aimbarforangle.yFixed + (138 - 30), 0xffff);
 			wait_for_vsync();
 			pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-			draw_line(game.aimBar.prevXEnd,game.aimBar.prevYEnd,game.aimBar.xFixed + (37 +15) , game.aimBar.yFixed + (138 - 30), 0xffff);
+			draw_line(game.aimbarforangle.prevXEnd,game.aimbarforangle.prevYEnd,game.aimbarforangle.xFixed + (37 +15) , game.aimbarforangle.yFixed + (138 - 30), 0xffff);
 		}
 		drawAngleBackground();
 		wait_for_vsync();
@@ -2110,8 +2108,8 @@ void SetAngleBar(){
 		prevAngle = angleCounter;
 		angleCounter+=angleDirection;
 		
-		game.aimBar.prevXEnd = game.aimBar.xEnd;
-		game.aimBar.prevYEnd = game.aimBar.yEnd;		
+		game.aimbarforangle.prevXEnd = game.aimbarforangle.xEnd;
+		game.aimbarforangle.prevYEnd = game.aimbarforangle.yEnd;		
 		if(angleCounter==10){
 			
 			angleDirection= -1;
@@ -2122,16 +2120,16 @@ void SetAngleBar(){
 			angleCounter = 0;
 			
 		}
-		game.aimBar.xEnd = game.aimBar.pointX[angleCounter] + 37 +15 ;
-		game.aimBar.yEnd = game.aimBar.pointY[angleCounter] + 138 - 30;
+		game.aimbarforangle.xEnd = game.aimbarforangle.pointX[angleCounter] + 37 +15 ;
+		game.aimbarforangle.yEnd = game.aimbarforangle.pointY[angleCounter] + 138 - 30;
 		
 		count = 1;
 		
 		//draws blue line 
-		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
+		draw_line(game.aimbarforangle.xEnd, game.aimbarforangle.yEnd, game.aimbarforangle.xFixed + 37 +15, game.aimbarforangle.yFixed  + (138 - 30) , 6447);
 		wait_for_vsync();
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-		draw_line(game.aimBar.xEnd, game.aimBar.yEnd, game.aimBar.xFixed + 37 +15, game.aimBar.yFixed  + (138 - 30) , 6447);
+		draw_line(game.aimbarforangle.xEnd, game.aimbarforangle.yEnd, game.aimbarforangle.xFixed + 37 +15, game.aimbarforangle.yFixed  + (138 - 30) , 6447);
 		for(long long int i = 0; i < 100000; i ++){
 
 		}
@@ -2160,10 +2158,10 @@ void SetAngleBar(){
 				}
 				
 				if(angleDirection == 1){
-					game.aimBar.angle = game.aimBar.angleArray[prevAngle];
+					game.aimbarforangle.angle = game.aimbarforangle.angleArray[prevAngle];
 				}
 				else{
-					game.aimBar.angle = game.aimBar.angleArray[prevAngle];					
+					game.aimbarforangle.angle = game.aimbarforangle.angleArray[prevAngle];					
 				}
 
 				
@@ -2218,19 +2216,19 @@ void eraseAngleBackground(){
 	}	
 }
 
-void eraseBasketballNet(){
-	for (int x =game.net.x  ; x< game.net.x+80 ;x++){
-		for (int y = game.net.y; y<game.net.y + 47; y++){
+void eraseBasketballstructforgameBasketBallnet(){
+	for (int x =game.BasketBallnet.x  ; x< game.BasketBallnet.x+80 ;x++){
+		for (int y = game.BasketBallnet.y; y<game.BasketBallnet.y + 47; y++){
 				plot_pixel(x,y,game.background[y][x]);			
 		}
 	}	
 }
 
-void drawBasketballNet(){
-	for (int x =game.net.x  ; x< game.net.x+80 ;x++){
-		for (int y = game.net.y; y<game.net.y + 47; y++){
-			if(basketballNetModel[y-game.net.y][x-game.net.x] != 51168){
-				plot_pixel(x,y,basketballNetModel[y-game.net.y][x-game.net.x]);
+void drawBasketballstructforgameBasketBallnet(){
+	for (int x =game.BasketBallnet.x  ; x< game.BasketBallnet.x+80 ;x++){
+		for (int y = game.BasketBallnet.y; y<game.BasketBallnet.y + 47; y++){
+			if(BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x] != 51168){
+				plot_pixel(x,y,BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x]);
 			}
 		}
 	}	
@@ -2387,26 +2385,26 @@ void drawCharacter(){
 }
 void callbackScore(){
 	
-	if( game.basketball.prevY+15/2<=game.net.y+31 && game.basketball.x +15/2>= game.net.x && game.basketball.y+ 15/2>= game.net.y+15 && game.basketball.x +15/2<= game.net.x + 39 + 15*1.5 ){
-		double changeinx = game.basketball.x -game.basketball.prevX;
-		double changeiny = game.basketball.y-game.basketball.prevY;
+	if( game.Basketballstructforgame.prevY+15/2<=game.BasketBallnet.y+31 && game.Basketballstructforgame.x +15/2>= game.BasketBallnet.x && game.Basketballstructforgame.y+ 15/2>= game.BasketBallnet.y+15 && game.Basketballstructforgame.x +15/2<= game.BasketBallnet.x + 39 + 15*1.5 ){
+		double changeinx = game.Basketballstructforgame.x -game.Basketballstructforgame.prevX;
+		double changeiny = game.Basketballstructforgame.y-game.Basketballstructforgame.prevY;
 		double m;
 		if (changeinx != 0 && changeiny!=0){
 			m = changeiny/changeinx;
-			double intersectX = (game.net.y+31 - (game.basketball.prevY+15/2)+ m*game.basketball.prevX+15/2)/m;
+			double intersectX = (game.BasketBallnet.y+31 - (game.Basketballstructforgame.prevY+15/2)+ m*game.Basketballstructforgame.prevX+15/2)/m;
 
-				if (intersectX<= game.net.x+39+31/2.0  && intersectX>= game.net.x+39-31/2.0 ){
-					game.basketball.changeiny = 1;
+				if (intersectX<= game.BasketBallnet.x+39+31/2.0  && intersectX>= game.BasketBallnet.x+39-31/2.0 ){
+					game.Basketballstructforgame.changeiny = 1;
 					
-					if(game.basketball.changeinx < 0){
-						game.basketball.changeinx =-1;
+					if(game.Basketballstructforgame.changeinx < 0){
+						game.Basketballstructforgame.changeinx =-1;
 					}else{
-						game.basketball.changeinx =1;
+						game.Basketballstructforgame.changeinx =1;
 					}
 					audio_playback_mono();
-					game.net.score =true;
-					game.basketball.x = game.net.x+39 - 15/2;
-					game.basketball.y = game.net.y+31 - 15/2;
+					game.BasketBallnet.score =true;
+					game.Basketballstructforgame.x = game.BasketBallnet.x+39 - 15/2;
+					game.Basketballstructforgame.y = game.BasketBallnet.y+31 - 15/2;
 				}
 		}
 	}
@@ -2423,8 +2421,8 @@ void callbackVisual(double speedoftheballInitial, double theta){
 	
 	angle = angle*3.1415/180.0;
 	
-    game.basketball.changeiny = (int) -1*speedoftheball*sine(angle);
-	game.basketball.changeinx = (int) speedoftheball*cosine(angle);
+    game.Basketballstructforgame.changeiny = (int) -1*speedoftheball*sine(angle);
+	game.Basketballstructforgame.changeinx = (int) speedoftheball*cosine(angle);
 	int count =0;
 	bool exit_drawvisual=false;
 	while (1)
@@ -2432,70 +2430,70 @@ void callbackVisual(double speedoftheballInitial, double theta){
 		eraseVisual(count);
 	
 		//update directions
-		game.basketball.prevX= game.basketball.x;
-	game.basketball.prevY=game.basketball.y;
+		game.Basketballstructforgame.prevX= game.Basketballstructforgame.x;
+	game.Basketballstructforgame.prevY=game.Basketballstructforgame.y;
 	
 	bool collisionX= false;
 	bool collisionY= false;
 	
 	// left rim
-	if(distance (game.basketball.x+15/2 +game.basketball.changeinx, game.basketball.y +15/2+game.basketball.changeiny , game.net.leftRimX, game.net.y + 31) < 15/2 +2){
+	if(distance (game.Basketballstructforgame.x+15/2 +game.Basketballstructforgame.changeinx, game.Basketballstructforgame.y +15/2+game.Basketballstructforgame.changeiny , game.BasketBallnet.leftRimX, game.BasketBallnet.y + 31) < 15/2 +2){
 		collisionX = true;
 		//outer rim 
-		if(game.basketball.x < game.net.leftRimX){
-			game.basketball.x = game.net.leftRimX - 15;
-			game.basketball.changeinx= -1* abs(game.basketball.changeinx/2);
+		if(game.Basketballstructforgame.x < game.BasketBallnet.leftRimX){
+			game.Basketballstructforgame.x = game.BasketBallnet.leftRimX - 15;
+			game.Basketballstructforgame.changeinx= -1* abs(game.Basketballstructforgame.changeinx/2);
 		}else{
 			//inner rim
 			collisionY=true;
-			game.basketball.x = game.net.leftRimX + 15 +1;
-			game.basketball.y = game.net.y +31 -1;
-			game.basketball.changeinx= abs(game.basketball.changeinx/2);
-			game.net.score = true;
-			game.basketball.changeiny =1;
-			game.basketball.changeinx =1;
+			game.Basketballstructforgame.x = game.BasketBallnet.leftRimX + 15 +1;
+			game.Basketballstructforgame.y = game.BasketBallnet.y +31 -1;
+			game.Basketballstructforgame.changeinx= abs(game.Basketballstructforgame.changeinx/2);
+			game.BasketBallnet.score = true;
+			game.Basketballstructforgame.changeiny =1;
+			game.Basketballstructforgame.changeinx =1;
 		}
 		
 	}
 	// right rim
-	if(distance (game.basketball.x+15/2 +game.basketball.changeinx, game.basketball.y +15/2+game.basketball.changeiny , game.net.rightRimX, game.net.y + 31) < 15/2 +2){
+	if(distance (game.Basketballstructforgame.x+15/2 +game.Basketballstructforgame.changeinx, game.Basketballstructforgame.y +15/2+game.Basketballstructforgame.changeiny , game.BasketBallnet.rightRimX, game.BasketBallnet.y + 31) < 15/2 +2){
 		collisionX = true;
 		//inner irm
-		if(game.basketball.x < game.net.rightRimX){
+		if(game.Basketballstructforgame.x < game.BasketBallnet.rightRimX){
 			collisionY=true;
 			printf("right rim1");
-			game.basketball.x = game.net.rightRimX - 15 -1;
-			game.basketball.y = game.net.y +31 -1;
-			game.basketball.changeinx= -1* abs(game.basketball.changeinx/2);
-			game.net.score =true;
-			game.basketball.changeiny =1;
-			game.basketball.changeinx = -1;			
+			game.Basketballstructforgame.x = game.BasketBallnet.rightRimX - 15 -1;
+			game.Basketballstructforgame.y = game.BasketBallnet.y +31 -1;
+			game.Basketballstructforgame.changeinx= -1* abs(game.Basketballstructforgame.changeinx/2);
+			game.BasketBallnet.score =true;
+			game.Basketballstructforgame.changeiny =1;
+			game.Basketballstructforgame.changeinx = -1;			
 		}else{
-			game.basketball.x = game.net.rightRimX+ 1;
-			game.basketball.changeinx= abs(game.basketball.changeinx/2);
+			game.Basketballstructforgame.x = game.BasketBallnet.rightRimX+ 1;
+			game.Basketballstructforgame.changeinx= abs(game.Basketballstructforgame.changeinx/2);
 		}
 	}
 	
-	if (game.basketball.x >= 320-15)
-		game.basketball.changeinx= -1* abs(game.basketball.changeinx/1.5);
-	if (game.basketball.x <= 0)
-		game.basketball.changeinx= abs(game.basketball.changeinx/2);
-	if(game.basketball.y >= 240-15){
-		game.basketball.changeiny = -1*abs(game.basketball.changeiny/2);
-		game.basketball.changeinx = 0;
+	if (game.Basketballstructforgame.x >= 320-15)
+		game.Basketballstructforgame.changeinx= -1* abs(game.Basketballstructforgame.changeinx/1.5);
+	if (game.Basketballstructforgame.x <= 0)
+		game.Basketballstructforgame.changeinx= abs(game.Basketballstructforgame.changeinx/2);
+	if(game.Basketballstructforgame.y >= 240-15){
+		game.Basketballstructforgame.changeiny = -1*abs(game.Basketballstructforgame.changeiny/2);
+		game.Basketballstructforgame.changeinx = 0;
 	}
-	if(game.basketball.y +15<240){
-		game.basketball.changeiny+=1;
+	if(game.Basketballstructforgame.y +15<240){
+		game.Basketballstructforgame.changeiny+=1;
 	}
 	
 	
 	if(!collisionX){
-		game.basketball.x+=game.basketball.changeinx;
+		game.Basketballstructforgame.x+=game.Basketballstructforgame.changeinx;
 	}
 	if(!collisionY){
-		game.basketball.y+=game.basketball.changeiny;
+		game.Basketballstructforgame.y+=game.Basketballstructforgame.changeiny;
 	}
-	if(!game.net.score){
+	if(!game.BasketBallnet.score){
 		callbackScore();
 	}
 	//update positions
@@ -2514,21 +2512,21 @@ void callbackVisual(double speedoftheballInitial, double theta){
 }
 
 bool drawVisual(){
-	if(game.basketball.changeiny == 0 && game.basketball.changeinx ==0 && game.basketball.y +15>=240 ){
-		game.basketball.y = game.basketball.starting_point_of_y;
-		game.basketball.x = game.basketball.starting_point_of_x;
+	if(game.Basketballstructforgame.changeiny == 0 && game.Basketballstructforgame.changeinx ==0 && game.Basketballstructforgame.y +15>=240 ){
+		game.Basketballstructforgame.y = game.Basketballstructforgame.starting_point_of_y;
+		game.Basketballstructforgame.x = game.Basketballstructforgame.starting_point_of_x;
 		game.gameState=8;
-		if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31,64704);
+		if(game.BasketBallnet.score){
+			draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31,64704);
 		}
 		return 0;
 	}
 	// code for drawing the boxes and lines (not shown)
-	for(int y=game.basketball.y;y<game.basketball.y+15;y++){
-		for(int x=game.basketball.x;x<game.basketball.x+15;x++){
+	for(int y=game.Basketballstructforgame.y;y<game.Basketballstructforgame.y+15;y++){
+		for(int x=game.Basketballstructforgame.x;x<game.Basketballstructforgame.x+15;x++){
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
-					if(basketballModel[y-game.basketball.y][x-game.basketball.x] != 51168){
-					plot_pixel(x,y,basketballModel[y-game.basketball.y][x-game.basketball.x]);
+					if(BasketballstructforgameModel[y-game.Basketballstructforgame.y][x-game.Basketballstructforgame.x] != 51168){
+					plot_pixel(x,y,BasketballstructforgameModel[y-game.Basketballstructforgame.y][x-game.Basketballstructforgame.x]);
 					}
 				}
 		}
@@ -2536,8 +2534,8 @@ bool drawVisual(){
 	for(long long int i = 0; i <300000;i++){
 		i++;
 	}
-	if(game.net.score){
-			draw_line(game.net.leftRimX, game.net.y+31, game.net.rightRimX+1, game.net.y+31, 0x07E0);
+	if(game.BasketBallnet.score){
+			draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 0x07E0);
 		}
 	// code for updating the locations of boxes (not shown)
 	
@@ -2546,16 +2544,16 @@ bool drawVisual(){
 
 void eraseVisual(int count){
 	if(count !=0){
-		for(int y=game.basketball.prevY;y<game.basketball.prevY+15;y++){
+		for(int y=game.Basketballstructforgame.prevY;y<game.Basketballstructforgame.prevY+15;y++){
 
-			for(int x=game.basketball.prevX;x<game.basketball.prevX+15;x++){
+			for(int x=game.Basketballstructforgame.prevX;x<game.Basketballstructforgame.prevX+15;x++){
 
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
 					plot_pixel(x,y,mainBackground[y][x]);
-					//redraws net
-					if(x>= game.net.x && x <game.net.x+80 && y>= game.net.y && y <game.net.y+47){
-						if(basketballNetModel[y-game.net.y][x-game.net.x] != 51168){
-							plot_pixel(x,y,basketballNetModel[y-game.net.y][x-game.net.x]);
+					//redraws BasketBallnet
+					if(x>= game.BasketBallnet.x && x <game.BasketBallnet.x+80 && y>= game.BasketBallnet.y && y <game.BasketBallnet.y+47){
+						if(BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x] != 51168){
+							plot_pixel(x,y,BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x]);
 						}
 					}
 				}
