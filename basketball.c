@@ -1796,7 +1796,6 @@ int main(void)
 
 void test2work() {
     if (game.net.score) {
-        srand(time(0));
         int newX = (rand() % (236 - 148 + 1)) + 148;
         int newY = (rand() % (138 - 20 + 1)) + 20;
 
