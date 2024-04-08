@@ -1738,42 +1738,34 @@ int main(void)
 			
 				
 			case 1:
-				//audio_playback_mono(samples, samples_n);
-				callBackCharacter();
+							callBackCharacter();
 				break;
 			
 			case 2:
 				callBackInstructions();
-				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case 3:
 			
 				SetAngleBar();
-				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case 4:
 			
 				callBackPower();
-				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case 5:
 			
 				callBackTiming();
-				//audio_playback_mono(samples, samples_n);
 				break;
 			
 			case 6:
 				callbackVisual(game.powerBar.speedoftheball,game.aimbarforangle.angle);
-				//audio_playback_mono(samples, samples_n);
 				eraseVisual(1);
-				// redraw rim original color in case its green
 				if(game.BasketBallnet.score){
 					draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 64704);
 				}
-				// audio_playback_mono();
 				break;
 
 			case 8:
@@ -2383,6 +2375,7 @@ void drawCharacter(){
 	}		
 	
 }
+
 void callbackScore(){
 	
 	if( game.Basketballstructforgame.prevY+15/2<=game.BasketBallnet.y+31 && game.Basketballstructforgame.x +15/2>= game.BasketBallnet.x && game.Basketballstructforgame.y+ 15/2>= game.BasketBallnet.y+15 && game.Basketballstructforgame.x +15/2<= game.BasketBallnet.x + 39 + 15*1.5 ){
@@ -2401,7 +2394,14 @@ void callbackScore(){
 					}else{
 						game.Basketballstructforgame.changeinx =1;
 					}
-					audio_playback_mono();
+            audiop->control = 0x8; // clear the output FIFOs
+            audiop->control = 0x0; // resume input conversion
+            for (int i = 0; i < 36966; i++) {
+              // output data if there is space in the output FIFOs
+              if ((audiop->wsrc != 0) && (audiop->wslc != 0)) {
+                  audiop->ldata = samples[i];
+                  audiop->rdata = samples[i];
+}	}
 					game.BasketBallnet.score =true;
 					game.Basketballstructforgame.x = game.BasketBallnet.x+39 - 15/2;
 					game.Basketballstructforgame.y = game.BasketBallnet.y+31 - 15/2;
