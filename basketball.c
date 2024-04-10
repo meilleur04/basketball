@@ -5,24 +5,24 @@
 void eraseVisual(int count);
 void test2work();
 bool drawVisual();
-void callbackVisual(double speedoftheballInitial, double theta);
 void drawBackground();
-void draw_line(int x0, int y0,int x1, int y1, short int line_color);
 void callBackCharacter();
 void callBackInstructions();
 void SetAngleBar();
 void drawBasketballstructforgameBasketBallnet();
+void drawline(int x0, int y0,int x1, int y1, short int line_color);
 void drawCharacter();
 void drawBasketballstructforgameBasketBallnet();
-void drawAngleBackground();
+void drawABackground();
 void eraseAngleBackground();
-void callBackPower();
-void drawPowerBar();
+void callBackPowerBar();
 void drawSlider();
+void drawPowerBar();
+void VisualTracking(double speedoftheballInitial, double theta);
 void erasePowerBar();
 void eraseSlider();
 void callBackTiming();
-void plot_pixel(int x, int y, short int line_color);
+void plotpixel(int x, int y, short int line_color);
 void eraseBasketballstructforgameBasketBallnet();
 void displayLives();
 void displayScore();
@@ -1751,7 +1751,7 @@ int main(void)
 			
 			case 4:
 			
-				callBackPower();
+				callBackPowerBar();
 				break;
 			
 			case 5:
@@ -1760,10 +1760,10 @@ int main(void)
 				break;
 			
 			case 6:
-				callbackVisual(game.powerBar.speedoftheball,game.aimbarforangle.angle);
+				VisualTracking(game.powerBar.speedoftheball,game.aimbarforangle.angle);
 				eraseVisual(1);
 				if(game.BasketBallnet.score){
-					draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 64704);
+					drawline(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 64704);
 				}
 				break;
 
@@ -1928,7 +1928,7 @@ eraseAngleBackground();
 erasePowerBar();
 eraseVisual(1);
 }
-void callBackPower(){
+void callBackPowerBar(){
 	drawPowerBar();
 	wait_for_vsync();
 	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
@@ -1997,7 +1997,7 @@ void callBackPower(){
 						
 					game.powerBar.speedoftheball = 14 + (int) adjustment;
 					
-					draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
+					drawline(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, 0 );
 					wait_for_vsync();
 					pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 					game.powerBar.ySlider = 230 -1;	
@@ -2021,17 +2021,17 @@ void callBackPower(){
 
 
 void drawSlider(){
-	draw_line(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, 0 );
+	drawline(game.powerBar.xSlider, game.powerBar.ySlider, game.powerBar.xSlider + 7, game.powerBar.ySlider, 0 );
 }
 
 void eraseSlider(){
-	draw_line(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.ArrayforPowerBar[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );	
+	drawline(game.powerBar.prevXSlider, game.powerBar.prevYSlider, game.powerBar.prevXSlider + 7, game.powerBar.prevYSlider, game.powerBar.ArrayforPowerBar[(game.powerBar.prevYSlider-160)][(game.powerBar.prevXSlider+7) - (52) -1]  );	
 }
 
 void drawPowerBar(){
 	for(int y = 160;y<230;y++){
 		for(int x= 52; x< 62; x++){
-				plot_pixel(x,y,game.powerBar.ArrayforPowerBar[y-160][x-52]);
+				plotpixel(x,y,game.powerBar.ArrayforPowerBar[y-160][x-52]);
 		}
 	}
 }
@@ -2039,7 +2039,7 @@ void drawPowerBar(){
 void erasePowerBar(){
 	for(int y = 160;y<230;y++){
 		for(int x= 52; x< 62; x++){	
-				plot_pixel(x,y,game.background[y][x]);
+				plotpixel(x,y,game.background[y][x]);
 			
 		}
 		
@@ -2058,7 +2058,7 @@ void SetAngleBar(){
 	drawCharacter();
 	drawBasketballstructforgameBasketBallnet();
 	drawVisual();
-	drawAngleBackground();
+	drawABackground();
 	wait_for_vsync();
 	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 
@@ -2066,7 +2066,7 @@ void SetAngleBar(){
 	drawCharacter();
 	drawBasketballstructforgameBasketBallnet();
 	drawVisual();
-	drawAngleBackground();
+	drawABackground();
 	
 	pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 	
@@ -2087,15 +2087,15 @@ void SetAngleBar(){
 
 	while (1) {
 		if(count!=0){
-			draw_line(game.aimbarforangle.prevXEnd,game.aimbarforangle.prevYEnd,game.aimbarforangle.xFixed + (37 +15) , game.aimbarforangle.yFixed + (138 - 30), 0xffff);
+			drawline(game.aimbarforangle.prevXEnd,game.aimbarforangle.prevYEnd,game.aimbarforangle.xFixed + (37 +15) , game.aimbarforangle.yFixed + (138 - 30), 0xffff);
 			wait_for_vsync();
 			pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-			draw_line(game.aimbarforangle.prevXEnd,game.aimbarforangle.prevYEnd,game.aimbarforangle.xFixed + (37 +15) , game.aimbarforangle.yFixed + (138 - 30), 0xffff);
+			drawline(game.aimbarforangle.prevXEnd,game.aimbarforangle.prevYEnd,game.aimbarforangle.xFixed + (37 +15) , game.aimbarforangle.yFixed + (138 - 30), 0xffff);
 		}
-		drawAngleBackground();
+		drawABackground();
 		wait_for_vsync();
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-		drawAngleBackground();
+		drawABackground();
 		prevAngle = angleCounter;
 		angleCounter+=angleDirection;
 		
@@ -2117,10 +2117,10 @@ void SetAngleBar(){
 		count = 1;
 		
 		//draws blue line 
-		draw_line(game.aimbarforangle.xEnd, game.aimbarforangle.yEnd, game.aimbarforangle.xFixed + 37 +15, game.aimbarforangle.yFixed  + (138 - 30) , 6447);
+		drawline(game.aimbarforangle.xEnd, game.aimbarforangle.yEnd, game.aimbarforangle.xFixed + 37 +15, game.aimbarforangle.yFixed  + (138 - 30) , 6447);
 		wait_for_vsync();
 		pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-		draw_line(game.aimbarforangle.xEnd, game.aimbarforangle.yEnd, game.aimbarforangle.xFixed + 37 +15, game.aimbarforangle.yFixed  + (138 - 30) , 6447);
+		drawline(game.aimbarforangle.xEnd, game.aimbarforangle.yEnd, game.aimbarforangle.xFixed + 37 +15, game.aimbarforangle.yFixed  + (138 - 30) , 6447);
 		for(long long int i = 0; i < 100000; i ++){
 
 		}
@@ -2177,7 +2177,7 @@ void SetAngleBar(){
 
 
 
-void drawAngleBackground(){
+void drawABackground(){
 	
 	for(int y=138 - 30; y<138; y++ ){
 		
@@ -2185,7 +2185,7 @@ void drawAngleBackground(){
 			
 			if(angle[y - (138 - 30)][x - (37 +15)] != 51168){
 				
-				plot_pixel(x,y,angle[y - (138 - 30) ][x - (37 +15)]);
+				plotpixel(x,y,angle[y - (138 - 30) ][x - (37 +15)]);
 				
 			}
 			
@@ -2201,7 +2201,7 @@ void eraseAngleBackground(){
 	for(int y=138 - 30; y<138; y++ ){
 		for(int x=37 +15; x<37 +45; x++){
 			if(angle[y - (138 - 30)][x - (37 +15)] != 51168){
-				plot_pixel(x,y,game.background[y][x]);	
+				plotpixel(x,y,game.background[y][x]);	
 			}	
 		}
 	}	
@@ -2210,7 +2210,7 @@ void eraseAngleBackground(){
 void eraseBasketballstructforgameBasketBallnet(){
 	for (int x =game.BasketBallnet.x  ; x< game.BasketBallnet.x+80 ;x++){
 		for (int y = game.BasketBallnet.y; y<game.BasketBallnet.y + 47; y++){
-				plot_pixel(x,y,game.background[y][x]);			
+				plotpixel(x,y,game.background[y][x]);			
 		}
 	}	
 }
@@ -2219,7 +2219,7 @@ void drawBasketballstructforgameBasketBallnet(){
 	for (int x =game.BasketBallnet.x  ; x< game.BasketBallnet.x+80 ;x++){
 		for (int y = game.BasketBallnet.y; y<game.BasketBallnet.y + 47; y++){
 			if(BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x] != 51168){
-				plot_pixel(x,y,BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x]);
+				plotpixel(x,y,BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x]);
 			}
 		}
 	}	
@@ -2359,7 +2359,7 @@ void callBackCharacter(){
 void drawBackground(){
 	for(int y=0;y<240;y++){
 		for(int x=0;x<320;x++){
-			plot_pixel(x,y,game.background[y][x]);
+			plotpixel(x,y,game.background[y][x]);
 		}
 	}
 }
@@ -2368,7 +2368,7 @@ void drawCharacter(){
 	for(int y=150;y<231;y++){
 		for(int x=0;x<60;x++){
 			if(game.player.playerModel[y-150][x]!=51168){
-				plot_pixel(x,y,game.player.playerModel[y-150][x - 0]);
+				plotpixel(x,y,game.player.playerModel[y-150][x - 0]);
 			}
 		}
 	}		
@@ -2414,7 +2414,7 @@ double distance(int x1, int y1, int x2, int y2){
 	return sqrta((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
 
-void callbackVisual(double speedoftheballInitial, double theta){
+void VisualTracking(double speedoftheballInitial, double theta){
 	double speedoftheball = speedoftheballInitial;
 	double angle = theta;
 	
@@ -2516,7 +2516,7 @@ bool drawVisual(){
 		game.Basketballstructforgame.x = game.Basketballstructforgame.starting_point_of_x;
 		game.gameState=8;
 		if(game.BasketBallnet.score){
-			draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31,64704);
+			drawline(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31,64704);
 		}
 		return 0;
 	}
@@ -2525,7 +2525,7 @@ bool drawVisual(){
 		for(int x=game.Basketballstructforgame.x;x<game.Basketballstructforgame.x+15;x++){
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
 					if(BasketballstructforgameModel[y-game.Basketballstructforgame.y][x-game.Basketballstructforgame.x] != 51168){
-					plot_pixel(x,y,BasketballstructforgameModel[y-game.Basketballstructforgame.y][x-game.Basketballstructforgame.x]);
+					plotpixel(x,y,BasketballstructforgameModel[y-game.Basketballstructforgame.y][x-game.Basketballstructforgame.x]);
 					}
 				}
 		}
@@ -2534,10 +2534,9 @@ bool drawVisual(){
 		i++;
 	}
 	if(game.BasketBallnet.score){
-			draw_line(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 0x07E0);
+			drawline(game.BasketBallnet.leftRimX, game.BasketBallnet.y+31, game.BasketBallnet.rightRimX+1, game.BasketBallnet.y+31, 0x07E0);
 		}
 	// code for updating the locations of boxes (not shown)
-	
 	return 1;
 }
 
@@ -2548,11 +2547,11 @@ void eraseVisual(int count){
 			for(int x=game.Basketballstructforgame.prevX;x<game.Basketballstructforgame.prevX+15;x++){
 
 				if(x>=0 && x<=320 && y >= 0 && y<=240){
-					plot_pixel(x,y,mainBackground[y][x]);
+					plotpixel(x,y,mainBackground[y][x]);
 					//redraws BasketBallnet
 					if(x>= game.BasketBallnet.x && x <game.BasketBallnet.x+80 && y>= game.BasketBallnet.y && y <game.BasketBallnet.y+47){
 						if(BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x] != 51168){
-							plot_pixel(x,y,BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x]);
+							plotpixel(x,y,BasketballstructforgameBasketBallnetModel[y-game.BasketBallnet.y][x-game.BasketBallnet.x]);
 						}
 					}
 				}
@@ -2563,7 +2562,8 @@ void eraseVisual(int count){
 	}
 }		
 
-void plot_pixel(int x, int y, short int line_color){
+//create the plotting pixed function
+void plotpixel(int x, int y, short int line_color){
     volatile short int *one_pixel_address;
 	
 	one_pixel_address = pixel_buffer_start + (y << 10) + (x << 1);
@@ -2571,15 +2571,19 @@ void plot_pixel(int x, int y, short int line_color){
 	*one_pixel_address = line_color;
 }
 
+//clear the screen
+
 void clear_screen(){
 	for (int x=0; x< 320; x++){
 		for (int y = 0 ; y<240; y++){
-			plot_pixel(x,y,0x0000);
+			plotpixel(x,y,0x0000);
 		}
 	}
 }
 
-void draw_line(int x0, int y0,int x1, int y1, short int line_color){
+
+//function to drawline on the screen
+void drawline(int x0, int y0,int x1, int y1, short int line_color){
 	bool is_steep = (ABS(y1-y0)>ABS(x1-x0));
 	
 	if(is_steep){
@@ -2599,7 +2603,7 @@ void draw_line(int x0, int y0,int x1, int y1, short int line_color){
 	}
 	int deltax = x1-x0;
 	int deltay = abs(y1-y0);
-	int error = -(deltax/2);
+	int err = -(deltax/2);
 	int y = y0;
 	int y_step;
 	y_step =(y0<y1)?1:-1;
@@ -2607,15 +2611,15 @@ void draw_line(int x0, int y0,int x1, int y1, short int line_color){
 	for(int x = x0; x<=x1 ;x++){
 		
 		if(is_steep){
-			plot_pixel(y,x,line_color);
+			plotpixel(y,x,line_color);
 		}
 		else{
-			plot_pixel (x,y,line_color);
+			plotpixel (x,y,line_color);
 		}
-		error =error+deltay;
-		if(error >=0){ 
+		err =err+deltay;
+		if(err >=0){ 
 			y = y+y_step;
-			error = error-deltax;
+			err = err-deltax;
 		}
 		
 	}
